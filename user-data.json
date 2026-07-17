@@ -1,0 +1,492 @@
+{
+  "baidu": {
+    "appliedPosition": "管培生其他方向——oversea sales（自己补充）",
+    "progress": {
+      "网申": {
+        "status": "done",
+        "date": "7.10"
+      },
+      "测评": {
+        "status": "pending",
+        "date": ""
+      },
+      "笔试": {
+        "status": "pending",
+        "date": ""
+      },
+      "一面": {
+        "status": "pending",
+        "date": ""
+      },
+      "二面": {
+        "status": "pending",
+        "date": ""
+      },
+      "HR面": {
+        "status": "pending",
+        "date": ""
+      },
+      "OFFER": {
+        "status": "pending",
+        "date": ""
+      }
+    },
+    "notes": "",
+    "status": "applied"
+  },
+  "pdd": {
+    "appliedPosition": "市场管培生上海KOL运营（目前开放了上海）第二志愿是商务管培",
+    "progress": {
+      "网申": {
+        "status": "done",
+        "date": "7.10"
+      },
+      "测评": {
+        "status": "pending",
+        "date": ""
+      },
+      "笔试": {
+        "status": "pending",
+        "date": ""
+      },
+      "一面": {
+        "status": "pending",
+        "date": ""
+      },
+      "二面": {
+        "status": "pending",
+        "date": ""
+      },
+      "HR面": {
+        "status": "pending",
+        "date": ""
+      },
+      "OFFER": {
+        "status": "pending",
+        "date": ""
+      }
+    },
+    "notes": "",
+    "status": "applied"
+  },
+  "iflytek": {
+    "appliedPosition": "非凡计划——营销方向",
+    "progress": {
+      "网申": {
+        "status": "done",
+        "date": "7.10"
+      },
+      "测评": {
+        "status": "active",
+        "date": ""
+      },
+      "笔试": {
+        "status": "pending",
+        "date": ""
+      },
+      "一面": {
+        "status": "pending",
+        "date": ""
+      },
+      "二面": {
+        "status": "pending",
+        "date": ""
+      },
+      "HR面": {
+        "status": "pending",
+        "date": ""
+      },
+      "OFFER": {
+        "status": "pending",
+        "date": ""
+      }
+    },
+    "notes": "线上测评已发",
+    "status": "interviewing"
+  },
+  "dji": {
+    "appliedPosition": "海外销售岗",
+    "progress": {
+      "网申": {
+        "status": "done",
+        "date": "7.10"
+      },
+      "测评": {
+        "status": "pending",
+        "date": ""
+      },
+      "笔试": {
+        "status": "pending",
+        "date": ""
+      },
+      "一面": {
+        "status": "pending",
+        "date": ""
+      },
+      "二面": {
+        "status": "pending",
+        "date": ""
+      },
+      "HR面": {
+        "status": "pending",
+        "date": ""
+      },
+      "OFFER": {
+        "status": "pending",
+        "date": ""
+      }
+    },
+    "notes": "",
+    "status": "applied"
+  },
+  "huolala": {
+    "appliedPosition": "全球拓展管培生",
+    "progress": {
+      "网申": {
+        "status": "done",
+        "date": "7.10"
+      },
+      "测评": {
+        "status": "pending",
+        "date": ""
+      },
+      "笔试": {
+        "status": "pending",
+        "date": ""
+      },
+      "一面": {
+        "status": "pending",
+        "date": ""
+      },
+      "二面": {
+        "status": "pending",
+        "date": ""
+      },
+      "HR面": {
+        "status": "pending",
+        "date": ""
+      },
+      "OFFER": {
+        "status": "pending",
+        "date": ""
+      }
+    },
+    "notes": "",
+    "status": "applied"
+  },
+  "deepseek": {
+    "appliedPosition": "AGI核心业务管培",
+    "progress": {
+      "网申": {
+        "status": "done",
+        "date": "7.12"
+      },
+      "测评": {
+        "status": "pending",
+        "date": ""
+      },
+      "笔试": {
+        "status": "pending",
+        "date": ""
+      },
+      "一面": {
+        "status": "pending",
+        "date": ""
+      },
+      "二面": {
+        "status": "pending",
+        "date": ""
+      },
+      "HR面": {
+        "status": "pending",
+        "date": ""
+      },
+      "OFFER": {
+        "status": "pending",
+        "date": ""
+      }
+    },
+    "notes": "",
+    "status": "applied"
+  },
+  "xpeng": {
+    "appliedPosition": "海外用户运营澳新地区",
+    "progress": {
+      "网申": {
+        "status": "done",
+        "date": "7.12"
+      },
+      "测评": {
+        "status": "pending",
+        "date": ""
+      },
+      "笔试": {
+        "status": "pending",
+        "date": ""
+      },
+      "一面": {
+        "status": "pending",
+        "date": ""
+      },
+      "二面": {
+        "status": "pending",
+        "date": ""
+      },
+      "HR面": {
+        "status": "pending",
+        "date": ""
+      },
+      "OFFER": {
+        "status": "pending",
+        "date": ""
+      }
+    },
+    "notes": "",
+    "status": "applied"
+  },
+  "zte": {
+    "appliedPosition": "MKT经理",
+    "progress": {
+      "网申": {
+        "status": "done",
+        "date": "7.12"
+      },
+      "测评": {
+        "status": "pending",
+        "date": ""
+      },
+      "笔试": {
+        "status": "pending",
+        "date": ""
+      },
+      "一面": {
+        "status": "pending",
+        "date": ""
+      },
+      "二面": {
+        "status": "pending",
+        "date": ""
+      },
+      "HR面": {
+        "status": "pending",
+        "date": ""
+      },
+      "OFFER": {
+        "status": "pending",
+        "date": ""
+      }
+    },
+    "notes": "",
+    "status": "applied"
+  },
+  "gusheng": {
+    "appliedPosition": "渠道营销 销售支持",
+    "progress": {
+      "网申": {
+        "status": "done",
+        "date": "7.12"
+      },
+      "测评": {
+        "status": "pending",
+        "date": ""
+      },
+      "笔试": {
+        "status": "pending",
+        "date": ""
+      },
+      "一面": {
+        "status": "pending",
+        "date": ""
+      },
+      "二面": {
+        "status": "pending",
+        "date": ""
+      },
+      "HR面": {
+        "status": "pending",
+        "date": ""
+      },
+      "OFFER": {
+        "status": "pending",
+        "date": ""
+      }
+    },
+    "notes": "",
+    "status": "applied"
+  },
+  "robosense": {
+    "appliedPosition": "项目管理-机器人线",
+    "progress": {
+      "网申": {
+        "status": "done",
+        "date": "7.12"
+      },
+      "测评": {
+        "status": "pending",
+        "date": ""
+      },
+      "笔试": {
+        "status": "pending",
+        "date": ""
+      },
+      "一面": {
+        "status": "pending",
+        "date": ""
+      },
+      "二面": {
+        "status": "pending",
+        "date": ""
+      },
+      "HR面": {
+        "status": "pending",
+        "date": ""
+      },
+      "OFFER": {
+        "status": "pending",
+        "date": ""
+      }
+    },
+    "notes": "",
+    "status": "applied"
+  },
+  "pudu": {
+    "appliedPosition": "海外销售欧洲日本韩国",
+    "progress": {
+      "网申": {
+        "status": "done",
+        "date": "7.12"
+      },
+      "测评": {
+        "status": "pending",
+        "date": ""
+      },
+      "笔试": {
+        "status": "pending",
+        "date": ""
+      },
+      "一面": {
+        "status": "pending",
+        "date": ""
+      },
+      "二面": {
+        "status": "pending",
+        "date": ""
+      },
+      "HR面": {
+        "status": "pending",
+        "date": ""
+      },
+      "OFFER": {
+        "status": "pending",
+        "date": ""
+      }
+    },
+    "notes": "",
+    "status": "applied"
+  },
+  "haid": {
+    "appliedPosition": "鲸英领袖生",
+    "progress": {
+      "网申": {
+        "status": "done",
+        "date": "7.12"
+      },
+      "测评": {
+        "status": "pending",
+        "date": ""
+      },
+      "笔试": {
+        "status": "pending",
+        "date": ""
+      },
+      "一面": {
+        "status": "pending",
+        "date": ""
+      },
+      "二面": {
+        "status": "pending",
+        "date": ""
+      },
+      "HR面": {
+        "status": "pending",
+        "date": ""
+      },
+      "OFFER": {
+        "status": "pending",
+        "date": ""
+      }
+    },
+    "notes": "",
+    "status": "applied"
+  },
+  "hisense": {
+    "appliedPosition": "海外品牌营销实习生",
+    "progress": {
+      "网申": {
+        "status": "done",
+        "date": "7.12"
+      },
+      "测评": {
+        "status": "pending",
+        "date": ""
+      },
+      "笔试": {
+        "status": "pending",
+        "date": ""
+      },
+      "一面": {
+        "status": "pending",
+        "date": ""
+      },
+      "二面": {
+        "status": "pending",
+        "date": ""
+      },
+      "HR面": {
+        "status": "pending",
+        "date": ""
+      },
+      "OFFER": {
+        "status": "pending",
+        "date": ""
+      }
+    },
+    "notes": "",
+    "status": "applied"
+  },
+  "unitree": {
+    "appliedPosition": "海外销售",
+    "progress": {
+      "网申": {
+        "status": "done",
+        "date": "7.12"
+      },
+      "测评": {
+        "status": "pending",
+        "date": ""
+      },
+      "笔试": {
+        "status": "pending",
+        "date": ""
+      },
+      "一面": {
+        "status": "pending",
+        "date": ""
+      },
+      "二面": {
+        "status": "pending",
+        "date": ""
+      },
+      "HR面": {
+        "status": "pending",
+        "date": ""
+      },
+      "OFFER": {
+        "status": "pending",
+        "date": ""
+      }
+    },
+    "notes": "",
+    "status": "applied"
+  }
+}
