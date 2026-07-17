@@ -1764,32 +1764,10 @@ async function pullFromCloud() {
     const bytes = new Uint8Array(binary.length);
     for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
     const content = JSON.parse(new TextDecoder('utf-8').decode(bytes));
-    // Merge: cloud data takes priority for fields not in local
-    let merged = false;
-    for (const id in content) {
-      if (!userState[id]) {
-        userState[id] = content[id];
-        merged = true;
-      } else {
-        // Deep merge: cloud wins if it has more progress
-        const cloud = content[id];
-        const local = userState[id];
-        for (const key of Object.keys(cloud)) {
-          if (key === 'progress') {
-            for (const step in cloud.progress) {
-              if (!local.progress[step] || cloud.progress[step].status === 'done') {
-                local.progress[step] = cloud.progress[step];
-                merged = true;
-              }
-            }
-          } else if (!local[key] && cloud[key]) {
-            local[key] = cloud[key];
-            merged = true;
-          }
-        }
-      }
-    }
-    if (merged) { saveState(); renderCompanies(); }
+    // Cloud data is the source of truth — replace local entirely
+    userState = content;
+    saveState();
+    renderCompanies();
     lastSyncTime = new Date();
     if (ghToken) {
       setSyncStatus('online', '已连接云端');
