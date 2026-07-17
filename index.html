@@ -1764,8 +1764,23 @@ async function pullFromCloud() {
     const bytes = new Uint8Array(binary.length);
     for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
     const content = JSON.parse(new TextDecoder('utf-8').decode(bytes));
-    // Cloud data is the source of truth — replace local entirely
-    userState = content;
+    // Clean cloud data: strip any garbled progress keys, ensure valid steps
+    for (const id in content) {
+      const entry = content[id];
+      if (!entry.progress) entry.progress = {};
+      // Remove any key that's not a valid step
+      const validSteps = ['网申','测评','笔试','一面','二面','HR面','OFFER'];
+      const cleaned = {};
+      validSteps.forEach(s => {
+        cleaned[s] = entry.progress[s] || {status:'pending', date:''};
+      });
+      entry.progress = cleaned;
+    }
+    // Merge: start with defaults, overlay cloud data
+    userState = JSON.parse(JSON.stringify(DEFAULT_USER_DATA));
+    for (const id in content) {
+      if (content[id].appliedPosition) userState[id] = content[id];
+    }
     saveState();
     renderCompanies();
     lastSyncTime = new Date();
@@ -1854,8 +1869,26 @@ function escapeHtml(str) {
   return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
+// ========== Default Data (from Excel, embedded to prevent encoding issues) ==========
+const DEFAULT_USER_DATA = {
+  "baidu": {"appliedPosition":"管培生其他方向——oversea sales（自己补充）","progress":{"网申":{"status":"done","date":"7.10"},"测评":{"status":"pending","date":""},"笔试":{"status":"pending","date":""},"一面":{"status":"pending","date":""},"二面":{"status":"pending","date":""},"HR面":{"status":"pending","date":""},"OFFER":{"status":"pending","date":""}},"notes":"","status":"applied"},
+  "pdd": {"appliedPosition":"市场管培生上海KOL运营（目前开放了上海）第二志愿是商务管培","progress":{"网申":{"status":"done","date":"7.10"},"测评":{"status":"pending","date":""},"笔试":{"status":"pending","date":""},"一面":{"status":"pending","date":""},"二面":{"status":"pending","date":""},"HR面":{"status":"pending","date":""},"OFFER":{"status":"pending","date":""}},"notes":"","status":"applied"},
+  "iflytek": {"appliedPosition":"非凡计划——营销方向","progress":{"网申":{"status":"done","date":"7.10"},"测评":{"status":"active","date":""},"笔试":{"status":"pending","date":""},"一面":{"status":"pending","date":""},"二面":{"status":"pending","date":""},"HR面":{"status":"pending","date":""},"OFFER":{"status":"pending","date":""}},"notes":"线上测评已发","status":"interviewing"},
+  "dji": {"appliedPosition":"海外销售岗","progress":{"网申":{"status":"done","date":"7.10"},"测评":{"status":"pending","date":""},"笔试":{"status":"pending","date":""},"一面":{"status":"pending","date":""},"二面":{"status":"pending","date":""},"HR面":{"status":"pending","date":""},"OFFER":{"status":"pending","date":""}},"notes":"","status":"applied"},
+  "huolala": {"appliedPosition":"全球拓展管培生","progress":{"网申":{"status":"done","date":"7.10"},"测评":{"status":"pending","date":""},"笔试":{"status":"pending","date":""},"一面":{"status":"pending","date":""},"二面":{"status":"pending","date":""},"HR面":{"status":"pending","date":""},"OFFER":{"status":"pending","date":""}},"notes":"","status":"applied"},
+  "deepseek": {"appliedPosition":"AGI核心业务管培","progress":{"网申":{"status":"done","date":"7.12"},"测评":{"status":"pending","date":""},"笔试":{"status":"pending","date":""},"一面":{"status":"pending","date":""},"二面":{"status":"pending","date":""},"HR面":{"status":"pending","date":""},"OFFER":{"status":"pending","date":""}},"notes":"","status":"applied"},
+  "xpeng": {"appliedPosition":"海外用户运营澳新地区","progress":{"网申":{"status":"done","date":"7.12"},"测评":{"status":"pending","date":""},"笔试":{"status":"pending","date":""},"一面":{"status":"pending","date":""},"二面":{"status":"pending","date":""},"HR面":{"status":"pending","date":""},"OFFER":{"status":"pending","date":""}},"notes":"","status":"applied"},
+  "zte": {"appliedPosition":"MKT经理","progress":{"网申":{"status":"done","date":"7.12"},"测评":{"status":"pending","date":""},"笔试":{"status":"pending","date":""},"一面":{"status":"pending","date":""},"二面":{"status":"pending","date":""},"HR面":{"status":"pending","date":""},"OFFER":{"status":"pending","date":""}},"notes":"","status":"applied"},
+  "gusheng": {"appliedPosition":"渠道营销 销售支持","progress":{"网申":{"status":"done","date":"7.12"},"测评":{"status":"pending","date":""},"笔试":{"status":"pending","date":""},"一面":{"status":"pending","date":""},"二面":{"status":"pending","date":""},"HR面":{"status":"pending","date":""},"OFFER":{"status":"pending","date":""}},"notes":"","status":"applied"},
+  "robosense": {"appliedPosition":"项目管理-机器人线","progress":{"网申":{"status":"done","date":"7.12"},"测评":{"status":"pending","date":""},"笔试":{"status":"pending","date":""},"一面":{"status":"pending","date":""},"二面":{"status":"pending","date":""},"HR面":{"status":"pending","date":""},"OFFER":{"status":"pending","date":""}},"notes":"","status":"applied"},
+  "pudu": {"appliedPosition":"海外销售欧洲日本韩国","progress":{"网申":{"status":"done","date":"7.12"},"测评":{"status":"pending","date":""},"笔试":{"status":"pending","date":""},"一面":{"status":"pending","date":""},"二面":{"status":"pending","date":""},"HR面":{"status":"pending","date":""},"OFFER":{"status":"pending","date":""}},"notes":"","status":"applied"},
+  "haid": {"appliedPosition":"鲸英领袖生","progress":{"网申":{"status":"done","date":"7.12"},"测评":{"status":"pending","date":""},"笔试":{"status":"pending","date":""},"一面":{"status":"pending","date":""},"二面":{"status":"pending","date":""},"HR面":{"status":"pending","date":""},"OFFER":{"status":"pending","date":""}},"notes":"","status":"applied"},
+  "hisense": {"appliedPosition":"海外品牌营销实习生","progress":{"网申":{"status":"done","date":"7.12"},"测评":{"status":"pending","date":""},"笔试":{"status":"pending","date":""},"一面":{"status":"pending","date":""},"二面":{"status":"pending","date":""},"HR面":{"status":"pending","date":""},"OFFER":{"status":"pending","date":""}},"notes":"","status":"applied"},
+  "unitree": {"appliedPosition":"海外销售","progress":{"网申":{"status":"done","date":"7.12"},"测评":{"status":"pending","date":""},"笔试":{"status":"pending","date":""},"一面":{"status":"pending","date":""},"二面":{"status":"pending","date":""},"HR面":{"status":"pending","date":""},"OFFER":{"status":"pending","date":""}},"notes":"","status":"applied"}
+};
+
 // ========== Override saveState to trigger cloud sync ==========
-let cloudReady = false; // Block pushes until clean cloud data is loaded
+let cloudReady = false;
 const _originalSaveState = saveState;
 saveState = function() {
   localStorage.setItem('qiuzhao_tracker_v1', JSON.stringify(userState));
@@ -1863,11 +1896,12 @@ saveState = function() {
 };
 
 // ========== Init ==========
-// Clear potentially corrupted local data before anything else
+// Clear corrupted local data, use embedded defaults
 localStorage.removeItem('qiuzhao_tracker_v1');
-userState = {};
-loadState();
+userState = JSON.parse(JSON.stringify(DEFAULT_USER_DATA));
+saveState();
 renderCompanies();
+// Then try to sync with cloud (cloud data may override if newer)
 initCloudSync().then(() => { cloudReady = true; });
 
 </script>
