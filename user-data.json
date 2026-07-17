@@ -29,28 +29,40 @@
       "OFFER": {
         "status": "pending",
         "date": ""
-      },
-      "ç½ç³": {
+      }
+    },
+    "notes": "",
+    "status": "applied",
+    "expanded": true
+  },
+  "pdd": {
+    "appliedPosition": "市场管培",
+    "progress": {
+      "网申": {
         "status": "done",
         "date": "7.10"
       },
-      "æµè¯": {
+      "测评": {
         "status": "pending",
         "date": ""
       },
-      "ç¬è¯": {
+      "笔试": {
         "status": "pending",
         "date": ""
       },
-      "ä¸é¢": {
+      "一面": {
         "status": "pending",
         "date": ""
       },
-      "äºé¢": {
+      "二面": {
         "status": "pending",
         "date": ""
       },
-      "HRé¢": {
+      "HR面": {
+        "status": "pending",
+        "date": ""
+      },
+      "OFFER": {
         "status": "pending",
         "date": ""
       }
@@ -58,6 +70,428 @@
     "notes": "",
     "status": "applied",
     "expanded": true
+  },
+  "iflytek": {
+    "appliedPosition": "éå¡è®¡åâè¥éæ¹å",
+    "progress": {
+      "网申": {
+        "status": "done",
+        "date": "7.10"
+      },
+      "测评": {
+        "status": "pending",
+        "date": ""
+      },
+      "笔试": {
+        "status": "pending",
+        "date": ""
+      },
+      "一面": {
+        "status": "pending",
+        "date": ""
+      },
+      "二面": {
+        "status": "pending",
+        "date": ""
+      },
+      "HR面": {
+        "status": "pending",
+        "date": ""
+      },
+      "OFFER": {
+        "status": "pending",
+        "date": ""
+      }
+    },
+    "notes": "çº¿ä¸æµè¯å·²å",
+    "status": "pending",
+    "expanded": true
+  },
+  "dji": {
+    "appliedPosition": "æµ·å¤éå®å²",
+    "progress": {
+      "网申": {
+        "status": "done",
+        "date": "7.10"
+      },
+      "测评": {
+        "status": "pending",
+        "date": ""
+      },
+      "笔试": {
+        "status": "pending",
+        "date": ""
+      },
+      "一面": {
+        "status": "pending",
+        "date": ""
+      },
+      "二面": {
+        "status": "pending",
+        "date": ""
+      },
+      "HR面": {
+        "status": "pending",
+        "date": ""
+      },
+      "OFFER": {
+        "status": "pending",
+        "date": ""
+      }
+    },
+    "notes": "",
+    "status": "pending",
+    "expanded": true
+  },
+  "huolala": {
+    "appliedPosition": "å¨çæå±ç®¡å¹ç",
+    "progress": {
+      "网申": {
+        "status": "done",
+        "date": "7.10"
+      },
+      "测评": {
+        "status": "pending",
+        "date": ""
+      },
+      "笔试": {
+        "status": "pending",
+        "date": ""
+      },
+      "一面": {
+        "status": "pending",
+        "date": ""
+      },
+      "二面": {
+        "status": "pending",
+        "date": ""
+      },
+      "HR面": {
+        "status": "pending",
+        "date": ""
+      },
+      "OFFER": {
+        "status": "pending",
+        "date": ""
+      }
+    },
+    "notes": "",
+    "status": "pending"
+  },
+  "deepseek": {
+    "appliedPosition": "AGIæ ¸å¿ä¸å¡ç®¡å¹",
+    "progress": {
+      "网申": {
+        "status": "done",
+        "date": "7.12"
+      },
+      "测评": {
+        "status": "pending",
+        "date": ""
+      },
+      "笔试": {
+        "status": "pending",
+        "date": ""
+      },
+      "一面": {
+        "status": "pending",
+        "date": ""
+      },
+      "二面": {
+        "status": "pending",
+        "date": ""
+      },
+      "HR面": {
+        "status": "pending",
+        "date": ""
+      },
+      "OFFER": {
+        "status": "pending",
+        "date": ""
+      }
+    },
+    "notes": "",
+    "status": "pending"
+  },
+  "xpeng": {
+    "appliedPosition": "æµ·å¤ç¨æ·è¿è¥ï¼æ¾³æ°å°åºï¼",
+    "progress": {
+      "网申": {
+        "status": "done",
+        "date": "7.12"
+      },
+      "测评": {
+        "status": "pending",
+        "date": ""
+      },
+      "笔试": {
+        "status": "pending",
+        "date": ""
+      },
+      "一面": {
+        "status": "pending",
+        "date": ""
+      },
+      "二面": {
+        "status": "pending",
+        "date": ""
+      },
+      "HR面": {
+        "status": "pending",
+        "date": ""
+      },
+      "OFFER": {
+        "status": "pending",
+        "date": ""
+      }
+    },
+    "notes": "",
+    "status": "pending"
+  },
+  "zte": {
+    "appliedPosition": "MKTç»ç",
+    "progress": {
+      "网申": {
+        "status": "done",
+        "date": "7.12"
+      },
+      "测评": {
+        "status": "pending",
+        "date": ""
+      },
+      "笔试": {
+        "status": "pending",
+        "date": ""
+      },
+      "一面": {
+        "status": "pending",
+        "date": ""
+      },
+      "二面": {
+        "status": "pending",
+        "date": ""
+      },
+      "HR面": {
+        "status": "pending",
+        "date": ""
+      },
+      "OFFER": {
+        "status": "pending",
+        "date": ""
+      }
+    },
+    "notes": "",
+    "status": "pending"
+  },
+  "gusheng": {
+    "appliedPosition": "æ¸ éè¥é/éå®æ¯æ",
+    "progress": {
+      "网申": {
+        "status": "done",
+        "date": "7.12"
+      },
+      "测评": {
+        "status": "pending",
+        "date": ""
+      },
+      "笔试": {
+        "status": "pending",
+        "date": ""
+      },
+      "一面": {
+        "status": "pending",
+        "date": ""
+      },
+      "二面": {
+        "status": "pending",
+        "date": ""
+      },
+      "HR面": {
+        "status": "pending",
+        "date": ""
+      },
+      "OFFER": {
+        "status": "pending",
+        "date": ""
+      }
+    },
+    "notes": "",
+    "status": "pending"
+  },
+  "robosense": {
+    "appliedPosition": "é¡¹ç®ç®¡ç-æºå¨äººçº¿",
+    "progress": {
+      "网申": {
+        "status": "done",
+        "date": "7.12"
+      },
+      "测评": {
+        "status": "pending",
+        "date": ""
+      },
+      "笔试": {
+        "status": "pending",
+        "date": ""
+      },
+      "一面": {
+        "status": "pending",
+        "date": ""
+      },
+      "二面": {
+        "status": "pending",
+        "date": ""
+      },
+      "HR面": {
+        "status": "pending",
+        "date": ""
+      },
+      "OFFER": {
+        "status": "pending",
+        "date": ""
+      }
+    },
+    "notes": "",
+    "status": "pending"
+  },
+  "pudu": {
+    "appliedPosition": "æµ·å¤éå®ï¼æ¬§æ´²/æ¥æ¬/é©å½ï¼",
+    "progress": {
+      "网申": {
+        "status": "done",
+        "date": "7.12"
+      },
+      "测评": {
+        "status": "pending",
+        "date": ""
+      },
+      "笔试": {
+        "status": "pending",
+        "date": ""
+      },
+      "一面": {
+        "status": "pending",
+        "date": ""
+      },
+      "二面": {
+        "status": "pending",
+        "date": ""
+      },
+      "HR面": {
+        "status": "pending",
+        "date": ""
+      },
+      "OFFER": {
+        "status": "pending",
+        "date": ""
+      }
+    },
+    "notes": "",
+    "status": "pending"
+  },
+  "haid": {
+    "appliedPosition": "é²¸è±é¢è¢ç",
+    "progress": {
+      "网申": {
+        "status": "done",
+        "date": "7.12"
+      },
+      "测评": {
+        "status": "pending",
+        "date": ""
+      },
+      "笔试": {
+        "status": "pending",
+        "date": ""
+      },
+      "一面": {
+        "status": "pending",
+        "date": ""
+      },
+      "二面": {
+        "status": "pending",
+        "date": ""
+      },
+      "HR面": {
+        "status": "pending",
+        "date": ""
+      },
+      "OFFER": {
+        "status": "pending",
+        "date": ""
+      }
+    },
+    "notes": "",
+    "status": "pending"
+  },
+  "hisense": {
+    "appliedPosition": "æµ·å¤åçè¥éå®ä¹ ç",
+    "progress": {
+      "网申": {
+        "status": "done",
+        "date": "7.12"
+      },
+      "测评": {
+        "status": "pending",
+        "date": ""
+      },
+      "笔试": {
+        "status": "pending",
+        "date": ""
+      },
+      "一面": {
+        "status": "pending",
+        "date": ""
+      },
+      "二面": {
+        "status": "pending",
+        "date": ""
+      },
+      "HR面": {
+        "status": "pending",
+        "date": ""
+      },
+      "OFFER": {
+        "status": "pending",
+        "date": ""
+      }
+    },
+    "notes": "",
+    "status": "pending"
+  },
+  "unitree": {
+    "appliedPosition": "æµ·å¤éå®",
+    "progress": {
+      "网申": {
+        "status": "done",
+        "date": "7.12"
+      },
+      "测评": {
+        "status": "pending",
+        "date": ""
+      },
+      "笔试": {
+        "status": "pending",
+        "date": ""
+      },
+      "一面": {
+        "status": "pending",
+        "date": ""
+      },
+      "二面": {
+        "status": "pending",
+        "date": ""
+      },
+      "HR面": {
+        "status": "pending",
+        "date": ""
+      },
+      "OFFER": {
+        "status": "pending",
+        "date": ""
+      }
+    },
+    "notes": "",
+    "status": "pending"
   },
   "alibaba": {
     "appliedPosition": "",
@@ -92,8 +526,7 @@
       }
     },
     "notes": "",
-    "status": "pending",
-    "expanded": true
+    "status": "pending"
   },
   "jd": {
     "appliedPosition": "",
@@ -129,66 +562,6 @@
     },
     "notes": "",
     "status": "pending"
-  },
-  "pdd": {
-    "appliedPosition": "市场管培",
-    "progress": {
-      "网申": {
-        "status": "done",
-        "date": "7.10"
-      },
-      "测评": {
-        "status": "pending",
-        "date": ""
-      },
-      "笔试": {
-        "status": "pending",
-        "date": ""
-      },
-      "一面": {
-        "status": "pending",
-        "date": ""
-      },
-      "二面": {
-        "status": "pending",
-        "date": ""
-      },
-      "HR面": {
-        "status": "pending",
-        "date": ""
-      },
-      "OFFER": {
-        "status": "pending",
-        "date": ""
-      },
-      "ç½ç³": {
-        "status": "done",
-        "date": "7.10"
-      },
-      "æµè¯": {
-        "status": "pending",
-        "date": ""
-      },
-      "ç¬è¯": {
-        "status": "pending",
-        "date": ""
-      },
-      "ä¸é¢": {
-        "status": "pending",
-        "date": ""
-      },
-      "äºé¢": {
-        "status": "pending",
-        "date": ""
-      },
-      "HRé¢": {
-        "status": "pending",
-        "date": ""
-      }
-    },
-    "notes": "",
-    "status": "applied",
-    "expanded": true
   },
   "meituan": {
     "appliedPosition": "",
@@ -259,66 +632,6 @@
     },
     "notes": "",
     "status": "pending"
-  },
-  "iflytek": {
-    "appliedPosition": "éå¡è®¡åâè¥éæ¹å",
-    "progress": {
-      "网申": {
-        "status": "done",
-        "date": "7.10"
-      },
-      "测评": {
-        "status": "pending",
-        "date": ""
-      },
-      "笔试": {
-        "status": "pending",
-        "date": ""
-      },
-      "一面": {
-        "status": "pending",
-        "date": ""
-      },
-      "二面": {
-        "status": "pending",
-        "date": ""
-      },
-      "HR面": {
-        "status": "pending",
-        "date": ""
-      },
-      "OFFER": {
-        "status": "pending",
-        "date": ""
-      },
-      "ç½ç³": {
-        "status": "done",
-        "date": "7.10"
-      },
-      "æµè¯": {
-        "status": "active",
-        "date": ""
-      },
-      "ç¬è¯": {
-        "status": "pending",
-        "date": ""
-      },
-      "ä¸é¢": {
-        "status": "pending",
-        "date": ""
-      },
-      "äºé¢": {
-        "status": "pending",
-        "date": ""
-      },
-      "HRé¢": {
-        "status": "pending",
-        "date": ""
-      }
-    },
-    "notes": "çº¿ä¸æµè¯å·²å",
-    "status": "pending",
-    "expanded": true
   },
   "arcsoft": {
     "appliedPosition": "",
@@ -494,66 +807,6 @@
     },
     "notes": "",
     "status": "pending"
-  },
-  "dji": {
-    "appliedPosition": "æµ·å¤éå®å²",
-    "progress": {
-      "网申": {
-        "status": "done",
-        "date": "7.10"
-      },
-      "测评": {
-        "status": "pending",
-        "date": ""
-      },
-      "笔试": {
-        "status": "pending",
-        "date": ""
-      },
-      "一面": {
-        "status": "pending",
-        "date": ""
-      },
-      "二面": {
-        "status": "pending",
-        "date": ""
-      },
-      "HR面": {
-        "status": "pending",
-        "date": ""
-      },
-      "OFFER": {
-        "status": "pending",
-        "date": ""
-      },
-      "ç½ç³": {
-        "status": "done",
-        "date": "7.10"
-      },
-      "æµè¯": {
-        "status": "pending",
-        "date": ""
-      },
-      "ç¬è¯": {
-        "status": "pending",
-        "date": ""
-      },
-      "ä¸é¢": {
-        "status": "pending",
-        "date": ""
-      },
-      "äºé¢": {
-        "status": "pending",
-        "date": ""
-      },
-      "HRé¢": {
-        "status": "pending",
-        "date": ""
-      }
-    },
-    "notes": "",
-    "status": "pending",
-    "expanded": true
   },
   "boe": {
     "appliedPosition": "",
@@ -1500,65 +1753,6 @@
     "notes": "",
     "status": "pending"
   },
-  "huolala": {
-    "appliedPosition": "å¨çæå±ç®¡å¹ç",
-    "progress": {
-      "网申": {
-        "status": "done",
-        "date": "7.10"
-      },
-      "测评": {
-        "status": "pending",
-        "date": ""
-      },
-      "笔试": {
-        "status": "pending",
-        "date": ""
-      },
-      "一面": {
-        "status": "pending",
-        "date": ""
-      },
-      "二面": {
-        "status": "pending",
-        "date": ""
-      },
-      "HR面": {
-        "status": "pending",
-        "date": ""
-      },
-      "OFFER": {
-        "status": "pending",
-        "date": ""
-      },
-      "ç½ç³": {
-        "status": "done",
-        "date": "7.10"
-      },
-      "æµè¯": {
-        "status": "pending",
-        "date": ""
-      },
-      "ç¬è¯": {
-        "status": "pending",
-        "date": ""
-      },
-      "ä¸é¢": {
-        "status": "pending",
-        "date": ""
-      },
-      "äºé¢": {
-        "status": "pending",
-        "date": ""
-      },
-      "HRé¢": {
-        "status": "pending",
-        "date": ""
-      }
-    },
-    "notes": "",
-    "status": "pending"
-  },
   "shein": {
     "appliedPosition": "",
     "progress": {
@@ -1692,65 +1886,6 @@
         "date": ""
       },
       "OFFER": {
-        "status": "pending",
-        "date": ""
-      }
-    },
-    "notes": "",
-    "status": "pending"
-  },
-  "deepseek": {
-    "appliedPosition": "AGIæ ¸å¿ä¸å¡ç®¡å¹",
-    "progress": {
-      "网申": {
-        "status": "done",
-        "date": "7.12"
-      },
-      "测评": {
-        "status": "pending",
-        "date": ""
-      },
-      "笔试": {
-        "status": "pending",
-        "date": ""
-      },
-      "一面": {
-        "status": "pending",
-        "date": ""
-      },
-      "二面": {
-        "status": "pending",
-        "date": ""
-      },
-      "HR面": {
-        "status": "pending",
-        "date": ""
-      },
-      "OFFER": {
-        "status": "pending",
-        "date": ""
-      },
-      "ç½ç³": {
-        "status": "done",
-        "date": "7.12"
-      },
-      "æµè¯": {
-        "status": "pending",
-        "date": ""
-      },
-      "ç¬è¯": {
-        "status": "pending",
-        "date": ""
-      },
-      "ä¸é¢": {
-        "status": "pending",
-        "date": ""
-      },
-      "äºé¢": {
-        "status": "pending",
-        "date": ""
-      },
-      "HRé¢": {
         "status": "pending",
         "date": ""
       }
@@ -2318,65 +2453,6 @@
     "notes": "",
     "status": "pending"
   },
-  "gusheng": {
-    "appliedPosition": "æ¸ éè¥é/éå®æ¯æ",
-    "progress": {
-      "网申": {
-        "status": "done",
-        "date": "7.12"
-      },
-      "测评": {
-        "status": "pending",
-        "date": ""
-      },
-      "笔试": {
-        "status": "pending",
-        "date": ""
-      },
-      "一面": {
-        "status": "pending",
-        "date": ""
-      },
-      "二面": {
-        "status": "pending",
-        "date": ""
-      },
-      "HR面": {
-        "status": "pending",
-        "date": ""
-      },
-      "OFFER": {
-        "status": "pending",
-        "date": ""
-      },
-      "ç½ç³": {
-        "status": "done",
-        "date": "7.12"
-      },
-      "æµè¯": {
-        "status": "pending",
-        "date": ""
-      },
-      "ç¬è¯": {
-        "status": "pending",
-        "date": ""
-      },
-      "ä¸é¢": {
-        "status": "pending",
-        "date": ""
-      },
-      "äºé¢": {
-        "status": "pending",
-        "date": ""
-      },
-      "HRé¢": {
-        "status": "pending",
-        "date": ""
-      }
-    },
-    "notes": "",
-    "status": "pending"
-  },
   "envision": {
     "appliedPosition": "",
     "progress": {
@@ -2552,183 +2628,6 @@
     "notes": "",
     "status": "pending"
   },
-  "robosense": {
-    "appliedPosition": "é¡¹ç®ç®¡ç-æºå¨äººçº¿",
-    "progress": {
-      "网申": {
-        "status": "done",
-        "date": "7.12"
-      },
-      "测评": {
-        "status": "pending",
-        "date": ""
-      },
-      "笔试": {
-        "status": "pending",
-        "date": ""
-      },
-      "一面": {
-        "status": "pending",
-        "date": ""
-      },
-      "二面": {
-        "status": "pending",
-        "date": ""
-      },
-      "HR面": {
-        "status": "pending",
-        "date": ""
-      },
-      "OFFER": {
-        "status": "pending",
-        "date": ""
-      },
-      "ç½ç³": {
-        "status": "done",
-        "date": "7.12"
-      },
-      "æµè¯": {
-        "status": "pending",
-        "date": ""
-      },
-      "ç¬è¯": {
-        "status": "pending",
-        "date": ""
-      },
-      "ä¸é¢": {
-        "status": "pending",
-        "date": ""
-      },
-      "äºé¢": {
-        "status": "pending",
-        "date": ""
-      },
-      "HRé¢": {
-        "status": "pending",
-        "date": ""
-      }
-    },
-    "notes": "",
-    "status": "pending"
-  },
-  "pudu": {
-    "appliedPosition": "æµ·å¤éå®ï¼æ¬§æ´²/æ¥æ¬/é©å½ï¼",
-    "progress": {
-      "网申": {
-        "status": "done",
-        "date": "7.12"
-      },
-      "测评": {
-        "status": "pending",
-        "date": ""
-      },
-      "笔试": {
-        "status": "pending",
-        "date": ""
-      },
-      "一面": {
-        "status": "pending",
-        "date": ""
-      },
-      "二面": {
-        "status": "pending",
-        "date": ""
-      },
-      "HR面": {
-        "status": "pending",
-        "date": ""
-      },
-      "OFFER": {
-        "status": "pending",
-        "date": ""
-      },
-      "ç½ç³": {
-        "status": "done",
-        "date": "7.12"
-      },
-      "æµè¯": {
-        "status": "pending",
-        "date": ""
-      },
-      "ç¬è¯": {
-        "status": "pending",
-        "date": ""
-      },
-      "ä¸é¢": {
-        "status": "pending",
-        "date": ""
-      },
-      "äºé¢": {
-        "status": "pending",
-        "date": ""
-      },
-      "HRé¢": {
-        "status": "pending",
-        "date": ""
-      }
-    },
-    "notes": "",
-    "status": "pending"
-  },
-  "unitree": {
-    "appliedPosition": "æµ·å¤éå®",
-    "progress": {
-      "网申": {
-        "status": "done",
-        "date": "7.12"
-      },
-      "测评": {
-        "status": "pending",
-        "date": ""
-      },
-      "笔试": {
-        "status": "pending",
-        "date": ""
-      },
-      "一面": {
-        "status": "pending",
-        "date": ""
-      },
-      "二面": {
-        "status": "pending",
-        "date": ""
-      },
-      "HR面": {
-        "status": "pending",
-        "date": ""
-      },
-      "OFFER": {
-        "status": "pending",
-        "date": ""
-      },
-      "ç½ç³": {
-        "status": "done",
-        "date": "7.12"
-      },
-      "æµè¯": {
-        "status": "pending",
-        "date": ""
-      },
-      "ç¬è¯": {
-        "status": "pending",
-        "date": ""
-      },
-      "ä¸é¢": {
-        "status": "pending",
-        "date": ""
-      },
-      "äºé¢": {
-        "status": "pending",
-        "date": ""
-      },
-      "HRé¢": {
-        "status": "pending",
-        "date": ""
-      }
-    },
-    "notes": "",
-    "status": "pending"
-  },
   "ge_aero": {
     "appliedPosition": "",
     "progress": {
@@ -2869,65 +2768,6 @@
     "notes": "",
     "status": "pending"
   },
-  "xpeng": {
-    "appliedPosition": "æµ·å¤ç¨æ·è¿è¥ï¼æ¾³æ°å°åºï¼",
-    "progress": {
-      "网申": {
-        "status": "done",
-        "date": "7.12"
-      },
-      "测评": {
-        "status": "pending",
-        "date": ""
-      },
-      "笔试": {
-        "status": "pending",
-        "date": ""
-      },
-      "一面": {
-        "status": "pending",
-        "date": ""
-      },
-      "二面": {
-        "status": "pending",
-        "date": ""
-      },
-      "HR面": {
-        "status": "pending",
-        "date": ""
-      },
-      "OFFER": {
-        "status": "pending",
-        "date": ""
-      },
-      "ç½ç³": {
-        "status": "done",
-        "date": "7.12"
-      },
-      "æµè¯": {
-        "status": "pending",
-        "date": ""
-      },
-      "ç¬è¯": {
-        "status": "pending",
-        "date": ""
-      },
-      "ä¸é¢": {
-        "status": "pending",
-        "date": ""
-      },
-      "äºé¢": {
-        "status": "pending",
-        "date": ""
-      },
-      "HRé¢": {
-        "status": "pending",
-        "date": ""
-      }
-    },
-    "notes": "",
-    "status": "pending"
-  },
   "voxah": {
     "appliedPosition": "",
     "progress": {
@@ -2998,65 +2838,6 @@
     "notes": "",
     "status": "pending"
   },
-  "zte": {
-    "appliedPosition": "MKTç»ç",
-    "progress": {
-      "网申": {
-        "status": "done",
-        "date": "7.12"
-      },
-      "测评": {
-        "status": "pending",
-        "date": ""
-      },
-      "笔试": {
-        "status": "pending",
-        "date": ""
-      },
-      "一面": {
-        "status": "pending",
-        "date": ""
-      },
-      "二面": {
-        "status": "pending",
-        "date": ""
-      },
-      "HR面": {
-        "status": "pending",
-        "date": ""
-      },
-      "OFFER": {
-        "status": "pending",
-        "date": ""
-      },
-      "ç½ç³": {
-        "status": "done",
-        "date": "7.12"
-      },
-      "æµè¯": {
-        "status": "pending",
-        "date": ""
-      },
-      "ç¬è¯": {
-        "status": "pending",
-        "date": ""
-      },
-      "ä¸é¢": {
-        "status": "pending",
-        "date": ""
-      },
-      "äºé¢": {
-        "status": "pending",
-        "date": ""
-      },
-      "HRé¢": {
-        "status": "pending",
-        "date": ""
-      }
-    },
-    "notes": "",
-    "status": "pending"
-  },
   "huawei": {
     "appliedPosition": "",
     "progress": {
@@ -3085,124 +2866,6 @@
         "date": ""
       },
       "OFFER": {
-        "status": "pending",
-        "date": ""
-      }
-    },
-    "notes": "",
-    "status": "pending"
-  },
-  "haid": {
-    "appliedPosition": "é²¸è±é¢è¢ç",
-    "progress": {
-      "网申": {
-        "status": "done",
-        "date": "7.12"
-      },
-      "测评": {
-        "status": "pending",
-        "date": ""
-      },
-      "笔试": {
-        "status": "pending",
-        "date": ""
-      },
-      "一面": {
-        "status": "pending",
-        "date": ""
-      },
-      "二面": {
-        "status": "pending",
-        "date": ""
-      },
-      "HR面": {
-        "status": "pending",
-        "date": ""
-      },
-      "OFFER": {
-        "status": "pending",
-        "date": ""
-      },
-      "ç½ç³": {
-        "status": "done",
-        "date": "7.12"
-      },
-      "æµè¯": {
-        "status": "pending",
-        "date": ""
-      },
-      "ç¬è¯": {
-        "status": "pending",
-        "date": ""
-      },
-      "ä¸é¢": {
-        "status": "pending",
-        "date": ""
-      },
-      "äºé¢": {
-        "status": "pending",
-        "date": ""
-      },
-      "HRé¢": {
-        "status": "pending",
-        "date": ""
-      }
-    },
-    "notes": "",
-    "status": "pending"
-  },
-  "hisense": {
-    "appliedPosition": "æµ·å¤åçè¥éå®ä¹ ç",
-    "progress": {
-      "网申": {
-        "status": "done",
-        "date": "7.12"
-      },
-      "测评": {
-        "status": "pending",
-        "date": ""
-      },
-      "笔试": {
-        "status": "pending",
-        "date": ""
-      },
-      "一面": {
-        "status": "pending",
-        "date": ""
-      },
-      "二面": {
-        "status": "pending",
-        "date": ""
-      },
-      "HR面": {
-        "status": "pending",
-        "date": ""
-      },
-      "OFFER": {
-        "status": "pending",
-        "date": ""
-      },
-      "ç½ç³": {
-        "status": "done",
-        "date": "7.12"
-      },
-      "æµè¯": {
-        "status": "pending",
-        "date": ""
-      },
-      "ç¬è¯": {
-        "status": "pending",
-        "date": ""
-      },
-      "ä¸é¢": {
-        "status": "pending",
-        "date": ""
-      },
-      "äºé¢": {
-        "status": "pending",
-        "date": ""
-      },
-      "HRé¢": {
         "status": "pending",
         "date": ""
       }
