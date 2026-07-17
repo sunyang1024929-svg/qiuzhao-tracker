@@ -1737,11 +1737,6 @@ function setSyncMsg(msg, type) {
 
 async function initCloudSync() {
   ghToken = getStoredToken();
-  if (!ghToken) {
-    setSyncStatus('offline', '未连接云端');
-    setSyncMsg('点击「设置同步」输入GitHub Token', '');
-    return;
-  }
   setSyncStatus('syncing', '连接中...');
   await pullFromCloud();
   // Auto-sync every 30 seconds
@@ -1752,9 +1747,9 @@ async function initCloudSync() {
 async function pullFromCloud() {
   try {
     const url = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${GITHUB_DATA_PATH}`;
-    const resp = await fetch(url, {
-      headers: { 'Authorization': `token ${ghToken}`, 'Accept': 'application/vnd.github.v3+json' }
-    });
+    const headers = { 'Accept': 'application/vnd.github.v3+json' };
+    if (ghToken) headers['Authorization'] = `token ${ghToken}`;
+    const resp = await fetch(url, { headers });
     if (resp.status === 404) {
       // File doesn't exist yet, create it
       cloudSHA = '';
@@ -1793,8 +1788,13 @@ async function pullFromCloud() {
     }
     if (merged) { saveState(); renderCompanies(); }
     lastSyncTime = new Date();
-    setSyncStatus('online', '已连接云端');
-    setSyncMsg('同步成功 ' + lastSyncTime.toLocaleTimeString(), 'success');
+    if (ghToken) {
+      setSyncStatus('online', '已连接云端');
+      setSyncMsg('同步成功 ' + lastSyncTime.toLocaleTimeString(), 'success');
+    } else {
+      setSyncStatus('online', '已拉取云端数据');
+      setSyncMsg('已加载投递记录。如需编辑同步，请点击「设置同步」输入Token', 'success');
+    }
     updateSyncTime();
     return true;
   } catch(e) {
