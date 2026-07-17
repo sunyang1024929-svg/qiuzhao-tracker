@@ -1836,6 +1836,7 @@ async function autoSync() {
 
 async function syncNow() {
   setSyncMsg('正在同步...', '');
+  if (!cloudReady) { setSyncMsg('正在拉取云端数据，请稍候...', ''); await pullFromCloud(); cloudReady = true; }
   const ok = await pushToCloud();
   if (ok) await pullFromCloud();
 }
@@ -1854,16 +1855,21 @@ function escapeHtml(str) {
 }
 
 // ========== Override saveState to trigger cloud sync ==========
+let cloudReady = false; // Block pushes until clean cloud data is loaded
 const _originalSaveState = saveState;
 saveState = function() {
   localStorage.setItem('qiuzhao_tracker_v1', JSON.stringify(userState));
-  if (ghToken) schedulePush();
+  if (ghToken && cloudReady) schedulePush();
 };
 
 // ========== Init ==========
+// Clear potentially corrupted local data before anything else
+localStorage.removeItem('qiuzhao_tracker_v1');
+userState = {};
 loadState();
 renderCompanies();
-initCloudSync();
+initCloudSync().then(() => { cloudReady = true; });
+
 </script>
 </body>
 </html>
