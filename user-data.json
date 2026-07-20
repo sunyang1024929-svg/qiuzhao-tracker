@@ -282,7 +282,8 @@
       }
     },
     "notes": "",
-    "status": "pending"
+    "status": "pending",
+    "expanded": true
   },
   "gusheng": {
     "appliedPosition": "æ¸ éè¥é/éå®æ¯æ",
