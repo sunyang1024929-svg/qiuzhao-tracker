@@ -422,7 +422,8 @@
       }
     },
     "notes": "",
-    "status": "pending"
+    "status": "pending",
+    "expanded": true
   },
   "hisense": {
     "appliedPosition": "æµ·å¤åçè¥éå®ä¹ ç",
