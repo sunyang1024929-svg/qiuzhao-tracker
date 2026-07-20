@@ -389,7 +389,8 @@
       }
     },
     "notes": "",
-    "status": "pending"
+    "status": "pending",
+    "expanded": true
   },
   "haid": {
     "appliedPosition": "é²¸è±é¢è¢ç",
