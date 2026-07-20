@@ -212,7 +212,8 @@
       }
     },
     "notes": "",
-    "status": "pending"
+    "status": "pending",
+    "expanded": true
   },
   "xpeng": {
     "appliedPosition": "æµ·å¤ç¨æ·è¿è¥ï¼æ¾³æ°å°åºï¼",
