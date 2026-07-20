@@ -522,7 +522,8 @@
       }
     },
     "notes": "",
-    "status": "pending"
+    "status": "pending",
+    "expanded": true
   },
   "jd": {
     "appliedPosition": "",
