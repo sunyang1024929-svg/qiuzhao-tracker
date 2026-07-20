@@ -354,7 +354,8 @@
       }
     },
     "notes": "",
-    "status": "pending"
+    "status": "pending",
+    "expanded": true
   },
   "pudu": {
     "appliedPosition": "æµ·å¤éå®ï¼æ¬§æ´²/æ¥æ¬/é©å½ï¼",
