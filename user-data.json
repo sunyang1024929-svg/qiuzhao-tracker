@@ -176,7 +176,8 @@
       }
     },
     "notes": "",
-    "status": "pending"
+    "status": "pending",
+    "expanded": true
   },
   "deepseek": {
     "appliedPosition": "AGIæ ¸å¿ä¸å¡ç®¡å¹",
