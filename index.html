@@ -278,11 +278,9 @@ body {
   <div class="sync-bar" id="loginPanel" style="display:none;">
     <span class="token-label">邮箱:</span>
     <input type="email" class="token-input" id="loginEmail" placeholder="you@example.com">
-    <button class="sync-btn primary" id="requestCodeBtn" onclick="requestLoginCode()">获取验证码</button>
-    <input type="text" class="token-input" id="loginCode" placeholder="6位验证码" style="width:100px;" maxlength="6">
-    <button class="sync-btn primary" onclick="verifyLoginCode()">登录</button>
+    <button class="sync-btn primary" id="requestCodeBtn" onclick="requestLoginCode()">发送登录链接</button>
     <button class="sync-btn" onclick="document.getElementById('loginPanel').style.display='none'">取消</button>
-    <span class="sync-msg">验证码 10 分钟内有效，仅用于登录你自己的账户</span>
+    <span class="sync-msg">登录链接 10 分钟内有效，仅用于登录你自己的账户</span>
   </div>
 
   <input type="text" class="search-box" id="searchBox" placeholder="搜索公司名、行业、岗位..." oninput="filterSearch()">
@@ -2004,30 +2002,18 @@ async function requestLoginCode() {
   const email = document.getElementById('loginEmail').value.trim().toLowerCase();
   if (!email) return setAuthMsg('请输入邮箱', 'error');
   try {
-    setAuthMsg('正在发送验证码...', '');
+    setAuthMsg('正在发送登录链接...', '');
     const { error } = await supabaseClient.auth.signInWithOtp({
       email,
-      options: { shouldCreateUser: true },
+      options: {
+        shouldCreateUser: true,
+        emailRedirectTo: `${window.location.origin}${window.location.pathname}`,
+      },
     });
     if (error) throw error;
-    setAuthMsg('验证码已发送，请检查邮箱', 'success');
+    setAuthMsg('登录链接已发送，请打开邮箱并点击链接', 'success');
   } catch (err) {
     setAuthMsg('发送失败：' + err.message, 'error');
-  }
-}
-
-async function verifyLoginCode() {
-  const email = document.getElementById('loginEmail').value.trim().toLowerCase();
-  const code = document.getElementById('loginCode').value.trim();
-  if (!email || !code) return setAuthMsg('请输入邮箱和验证码', 'error');
-  try {
-    const { data, error } = await supabaseClient.auth.verifyOtp({ email, token: code, type: 'email' });
-    if (error) throw error;
-    currentUser = data.user;
-    document.getElementById('loginPanel').style.display = 'none';
-    await loadRemoteState();
-  } catch (err) {
-    setAuthMsg('登录失败：' + err.message, 'error');
   }
 }
 
@@ -2115,6 +2101,13 @@ async function initAuth() {
     renderCompanies();
   }
 }
+
+supabaseClient.auth.onAuthStateChange((event, session) => {
+  if (event !== 'SIGNED_IN' || !session?.user) return;
+  currentUser = session.user;
+  document.getElementById('loginPanel').style.display = 'none';
+  loadRemoteState();
+});
 
 // ========== Init ==========
 initAuth();
