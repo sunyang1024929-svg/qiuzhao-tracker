@@ -5,6 +5,22 @@ import { fileURLToPath } from 'node:url';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(__dirname, '..');
 const indexPath = path.join(root, 'index.html');
+const publicUserDataPath = path.join(root, 'user-data.json');
+
+function ensurePublicUserDataIsEmpty() {
+  const raw = fs.readFileSync(publicUserDataPath, 'utf8');
+  let data;
+
+  try {
+    data = JSON.parse(raw);
+  } catch {
+    throw new Error('user-data.json must contain valid JSON.');
+  }
+
+  if (data === null || Array.isArray(data) || typeof data !== 'object' || Object.keys(data).length !== 0) {
+    throw new Error('Refusing to run: user-data.json must be {} so personal application data cannot be committed.');
+  }
+}
 
 const CATEGORY_MAP = [
   { cat: 'internet', tag: '互联网/AI', tagClass: 'tag-internet', words: ['科技', '互联网', 'AI', '人工智能', '云', '软件', '芯片', '半导体', '电子'] },
@@ -190,6 +206,7 @@ function toCompanyLiteral(c) {
 }
 
 async function main() {
+  ensurePublicUserDataIsEmpty();
   const html = fs.readFileSync(indexPath, 'utf8');
   const existing = extractExistingCompanies(html);
   const discovered = [...WATCHLIST, ...(await discoverFromSearch())];
