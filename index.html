@@ -1644,8 +1644,6 @@ const PROGRESS_STEPS = ["网申","测评","笔试","一面","二面","HR面","OF
 // ========== State ==========
 let currentFilter = 'all';
 let userState = {};
-let authToken = null;
-let authEmail = null;
 let isLoggedIn = false;
 
 // ========== Persistence (view-only cache; source of truth is backend when logged in) ==========
@@ -1808,25 +1806,6 @@ function ensureLoggedIn() {
   setAuthMsg('请先登录邮箱账号，再编辑个人投递信息', 'error');
   showLoginPanel();
   return false;
-}
-
-async function persistCompanyState(companyId) {
-  if (!isLoggedIn || !authToken) return;
-  const state = getCompanyState(companyId);
-  try {
-    await apiFetch(`/me/applications/${encodeURIComponent(companyId)}`, {
-      method: 'PUT',
-      body: JSON.stringify({
-        appliedPosition: state.appliedPosition || '',
-        status: state.status || 'pending',
-        notes: state.notes || '',
-        progress: state.progress || {},
-      }),
-    });
-    setAuthMsg('已保存', 'success');
-  } catch (err) {
-    setAuthMsg('保存失败：' + err.message, 'error');
-  }
 }
 
 function cycleProgress(companyId, stepName) {
