@@ -258,7 +258,7 @@ body {
 <div class="app">
   <div class="app-header">
     <div class="app-title">2027届秋招投递追踪器</div>
-    <div class="app-subtitle">聚焦营销/销售/GTM/运营/管培生方向 | 数据截至 2026年7月20日（+30家7月新启动公司） | 每日10:00自动更新公司列表</div>
+    <div class="app-subtitle">聚焦营销/销售/GTM/运营/管培生方向 | 公开公司列表每日9:40自动更新 | 登录后查看和编辑个人投递记录</div>
   </div>
 
   <div class="stats-bar">
@@ -268,21 +268,21 @@ body {
     <div class="stat-card"><div class="stat-num" id="statOffer">0</div><div class="stat-label">已获OFFER</div></div>
   </div>
 
-  <div class="sync-bar" id="syncBar">
-    <div class="sync-status"><div class="sync-dot offline" id="syncDot"></div><span id="syncStatusText">未连接云端</span></div>
-    <span class="sync-time" id="syncTime"></span>
-    <button class="sync-btn primary" id="syncBtn" onclick="syncNow()">同步数据</button>
-    <button class="sync-btn" onclick="showTokenSetup()">设置同步</button>
+  <div class="sync-bar" id="authBar">
+    <div class="sync-status"><div class="sync-dot offline" id="authDot"></div><span id="authStatusText">未登录（当前仅展示公开公司信息）</span></div>
+    <button class="sync-btn primary" id="loginBtn" onclick="showLoginPanel()">登录查看我的投递</button>
+    <button class="sync-btn" id="logoutBtn" onclick="logout()" style="display:none;">退出登录</button>
     <button class="data-btn export" onclick="exportData()">导出备份</button>
-    <button class="data-btn" onclick="importData()">导入恢复</button>
-    <span class="sync-msg" id="syncMsg"></span>
+    <span class="sync-msg" id="authMsg"></span>
   </div>
-  <div class="sync-bar" id="tokenPanel" style="display:none;">
-    <span class="token-label">GitHub Token:</span>
-    <input type="password" class="token-input" id="tokenInput" placeholder="ghp_... 或 github_pat_...">
-    <button class="sync-btn primary" onclick="saveToken()">保存并连接</button>
-    <button class="sync-btn" onclick="document.getElementById('tokenPanel').style.display='none'">取消</button>
-    <span class="sync-msg">Token仅存在本地浏览器，不会上传到任何服务器</span>
+  <div class="sync-bar" id="loginPanel" style="display:none;">
+    <span class="token-label">邮箱:</span>
+    <input type="email" class="token-input" id="loginEmail" placeholder="you@example.com">
+    <button class="sync-btn primary" id="requestCodeBtn" onclick="requestLoginCode()">获取验证码</button>
+    <input type="text" class="token-input" id="loginCode" placeholder="6位验证码" style="width:100px;" maxlength="6">
+    <button class="sync-btn primary" onclick="verifyLoginCode()">登录</button>
+    <button class="sync-btn" onclick="document.getElementById('loginPanel').style.display='none'">取消</button>
+    <span class="sync-msg">验证码 10 分钟内有效，仅用于登录你自己的账户</span>
   </div>
 
   <input type="text" class="search-box" id="searchBox" placeholder="搜索公司名、行业、岗位..." oninput="filterSearch()">
@@ -316,6 +316,7 @@ body {
   </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 // ========== Company Data ==========
 const COMPANIES = [
@@ -1643,28 +1644,22 @@ const PROGRESS_STEPS = ["网申","测评","笔试","一面","二面","HR面","OF
 // ========== State ==========
 let currentFilter = 'all';
 let userState = {};
+let authToken = null;
+let authEmail = null;
+let isLoggedIn = false;
 
-// ========== Persistence ==========
-function loadState() {
-  try {
-    const saved = localStorage.getItem('qiuzhao_tracker_v1');
-    if (saved) userState = JSON.parse(saved);
-  } catch(e) { userState = {}; }
-}
-function saveState() {
-  localStorage.setItem('qiuzhao_tracker_v1', JSON.stringify(userState));
+// ========== Persistence (view-only cache; source of truth is backend when logged in) ==========
+function emptyCompanyState() {
+  const state = { appliedPosition: '', progress: {}, notes: '', status: 'pending' };
+  PROGRESS_STEPS.forEach(s => { state.progress[s] = { status: 'pending', date: '' }; });
+  return state;
 }
 function getCompanyState(id) {
-  if (!userState[id]) {
-    userState[id] = {
-      appliedPosition: '',
-      progress: {}, // stepName -> { status: 'done'|'active'|'pending', date: '' }
-      notes: '',
-      status: 'pending' // pending, applied, interviewing, offered, rejected
-    };
-    PROGRESS_STEPS.forEach(s => { userState[id].progress[s] = { status: 'pending', date: '' }; });
-  }
+  if (!userState[id]) userState[id] = emptyCompanyState();
   return userState[id];
+}
+function saveState() {
+  // Local cache only for the current session; not used to gate visibility.
 }
 
 // ========== Render ==========
@@ -1710,8 +1705,8 @@ function renderCompanies() {
       <div class="card-detail">
         <div class="detail-section">
           <div class="detail-label">投递岗位（可编辑）</div>
-          <div class="editable-field" contenteditable="true" data-placeholder="输入你投递的岗位，如：整合营销专员"
-            oninput="updateField('${c.id}','appliedPosition',this.innerText)">${escapeHtml(state.appliedPosition)}</div>
+          <div class="editable-field" contenteditable="${isLoggedIn ? 'true' : 'false'}" data-placeholder="${isLoggedIn ? '输入你投递的岗位，如：整合营销专员' : '登录后可查看和编辑你的投递岗位'}"
+            oninput="updateField('${c.id}','appliedPosition',this.innerText)">${isLoggedIn ? escapeHtml(state.appliedPosition) : ''}</div>
         </div>
 
         <div class="detail-section">
@@ -1725,7 +1720,7 @@ function renderCompanies() {
 
         <div class="detail-section">
           <div class="detail-label">整体状态</div>
-          <select class="status-select" onchange="updateStatus('${c.id}',this.value)">
+          <select class="status-select" ${isLoggedIn ? '' : 'disabled'} onchange="updateStatus('${c.id}',this.value)">
             <option value="pending" ${state.status==='pending'?'selected':''}>未投递</option>
             <option value="applied" ${state.status==='applied'?'selected':''}>已投递</option>
             <option value="interviewing" ${state.status==='interviewing'?'selected':''}>面试中</option>
@@ -1759,8 +1754,8 @@ function renderCompanies() {
 
         <div class="detail-section">
           <div class="detail-label">备注（可编辑）</div>
-          <textarea class="notes-area" data-placeholder="记录面试经验、薪资信息、联系人等..."
-            oninput="updateField('${c.id}','notes',this.value)">${escapeHtml(state.notes)}</textarea>
+          <textarea class="notes-area" ${isLoggedIn ? '' : 'disabled'} data-placeholder="${isLoggedIn ? '记录面试经验、薪资信息、联系人等...' : '登录后可查看和编辑备注'}"
+            oninput="updateField('${c.id}','notes',this.value)">${isLoggedIn ? escapeHtml(state.notes) : ''}</textarea>
         </div>
 
         <div class="card-actions">
@@ -1787,9 +1782,9 @@ function renderTimeline(companyId, state) {
       <div class="timeline-step ${p.status}" onclick="cycleProgress('${companyId}','${step}')">
         <div class="step-circle">${num}</div>
         <div class="step-name">${step}</div>
-        <div class="step-date" contenteditable="true" onclick="event.stopPropagation()"
+        <div class="step-date" contenteditable="${isLoggedIn ? 'true' : 'false'}" onclick="event.stopPropagation()"
           oninput="updateProgressDate('${companyId}','${step}',this.innerText)"
-          data-placeholder="日期">${p.date ? escapeHtml(p.date) : ''}</div>
+          data-placeholder="${isLoggedIn ? '日期' : ''}">${isLoggedIn && p.date ? escapeHtml(p.date) : ''}</div>
       </div>
     `;
     if (i < PROGRESS_STEPS.length - 1) {
@@ -1808,36 +1803,62 @@ function toggleExpand(id) {
   saveState();
 }
 
+function ensureLoggedIn() {
+  if (isLoggedIn) return true;
+  setAuthMsg('请先登录邮箱账号，再编辑个人投递信息', 'error');
+  showLoginPanel();
+  return false;
+}
+
+async function persistCompanyState(companyId) {
+  if (!isLoggedIn || !authToken) return;
+  const state = getCompanyState(companyId);
+  try {
+    await apiFetch(`/me/applications/${encodeURIComponent(companyId)}`, {
+      method: 'PUT',
+      body: JSON.stringify({
+        appliedPosition: state.appliedPosition || '',
+        status: state.status || 'pending',
+        notes: state.notes || '',
+        progress: state.progress || {},
+      }),
+    });
+    setAuthMsg('已保存', 'success');
+  } catch (err) {
+    setAuthMsg('保存失败：' + err.message, 'error');
+  }
+}
+
 function cycleProgress(companyId, stepName) {
+  if (!ensureLoggedIn()) return;
   const state = getCompanyState(companyId);
   const p = state.progress[stepName];
   const cycle = ['pending', 'active', 'done'];
   const idx = cycle.indexOf(p.status);
   p.status = cycle[(idx + 1) % cycle.length];
   if (p.status === 'pending') p.date = '';
-  // Update auto status
   autoUpdateStatus(state);
   saveState();
-  // Re-render just the timeline
-  const tl = document.getElementById('timeline-' + companyId);
-  if (tl) tl.innerHTML = renderTimeline(companyId, state);
-  // Update mini dots
+  document.getElementById('timeline-' + companyId).innerHTML = renderTimeline(companyId, state);
   updateMiniDots(companyId);
   updateStats();
+  persistCompanyState(companyId);
 }
 
 function updateProgressDate(companyId, stepName, value) {
+  if (!ensureLoggedIn()) return;
   const state = getCompanyState(companyId);
   state.progress[stepName].date = value.trim();
   saveState();
+  persistCompanyState(companyId);
 }
 
 function updateField(companyId, field, value) {
+  if (!ensureLoggedIn()) return;
   const state = getCompanyState(companyId);
   state[field] = value;
   saveState();
   if (field === 'appliedPosition') {
-    // Update summary display
     const card = document.getElementById('card-' + companyId);
     if (card) {
       const posDiv = card.querySelector('.card-summary > div:nth-child(3)');
@@ -1854,51 +1875,26 @@ function updateField(companyId, field, value) {
     }
     updateStats();
   }
+  persistCompanyState(companyId);
 }
 
-function updateStatus(companyId, value) {
-  const state = getCompanyState(companyId);
-  state.status = value;
+function updateStatus(companyId, status) {
+  if (!ensureLoggedIn()) return;
+  getCompanyState(companyId).status = status;
   saveState();
   updateStats();
-}
-
-function autoUpdateStatus(state) {
-  let hasDone = false, hasActive = false, hasOffer = false;
-  PROGRESS_STEPS.forEach(s => {
-    if (state.progress[s].status === 'done') {
-      hasDone = true;
-      if (s === 'OFFER') hasOffer = true;
-    }
-    if (state.progress[s].status === 'active') hasActive = true;
-  });
-  if (hasOffer) state.status = 'offered';
-  else if (hasActive || hasDone) state.status = 'interviewing';
-  else if (state.appliedPosition) state.status = 'applied';
-  else state.status = 'pending';
-}
-
-function updateMiniDots(companyId) {
-  const state = getCompanyState(companyId);
-  const card = document.getElementById('card-' + companyId);
-  if (!card) return;
-  const dots = card.querySelectorAll('.progress-mini .progress-dot');
-  PROGRESS_STEPS.forEach((s, i) => {
-    if (dots[i]) {
-      dots[i].className = 'progress-dot ' + state.progress[s].status;
-    }
-  });
+  persistCompanyState(companyId);
 }
 
 function resetProgress(companyId) {
+  if (!ensureLoggedIn()) return;
   if (!confirm('确定要重置该公司的投递进度吗？')) return;
   const state = getCompanyState(companyId);
   PROGRESS_STEPS.forEach(s => { state.progress[s] = { status: 'pending', date: '' }; });
-  state.appliedPosition = '';
-  state.notes = '';
   state.status = 'pending';
   saveState();
   renderCompanies();
+  persistCompanyState(companyId);
 }
 
 // ========== Filters ==========
@@ -1970,6 +1966,7 @@ function exportData() {
 }
 
 function importData() {
+  if (!ensureLoggedIn()) return;
   const input = document.createElement('input');
   input.type = 'file';
   input.accept = '.json';
@@ -1993,6 +1990,7 @@ function importData() {
 }
 
 function clearData() {
+  if (!ensureLoggedIn()) return;
   if (!confirm('确定要清空所有投递记录吗？此操作不可撤销！')) return;
   if (!confirm('再次确认：所有公司的投递岗位、进度、备注都将被删除！')) return;
   userState = {};
@@ -2000,217 +1998,147 @@ function clearData() {
   renderCompanies();
 }
 
-// ========== Cloud Sync (GitHub API) ==========
-const GITHUB_OWNER = 'sunyang1024929-svg';
-const GITHUB_REPO = 'qiuzhao-tracker';
-const GITHUB_DATA_PATH = 'user-data.json';
-let ghToken = '';
-let cloudSHA = '';
-let syncTimer = null;
-let lastSyncTime = null;
+// ========== Supabase Auth Sync ==========
+const SUPABASE_URL = 'https://ftfjtbtqbozcmdbqevcr.supabase.co';
+const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_7zktrJsxfcrtba0VUBvf1A_7WeTMOoZ';
+const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+let currentUser = null;
 
-function getStoredToken() {
-  return localStorage.getItem('gh_token') || '';
-}
-
-function showTokenSetup() {
-  document.getElementById('tokenPanel').style.display = 'flex';
-  document.getElementById('tokenInput').value = getStoredToken();
-  document.getElementById('tokenInput').focus();
-}
-
-function saveToken() {
-  const token = document.getElementById('tokenInput').value.trim();
-  if (!token) { setSyncMsg('请输入Token', 'error'); return; }
-  localStorage.setItem('gh_token', token);
-  ghToken = token;
-  document.getElementById('tokenPanel').style.display = 'none';
-  setSyncMsg('Token已保存，正在连接...', '');
-  initCloudSync();
-}
-
-function setSyncStatus(status, text) {
-  const dot = document.getElementById('syncDot');
-  const txt = document.getElementById('syncStatusText');
+function setAuthStatus(status, text) {
+  const dot = document.getElementById('authDot');
+  const label = document.getElementById('authStatusText');
   dot.className = 'sync-dot ' + status;
-  txt.textContent = text;
+  label.textContent = text;
 }
 
-function setSyncMsg(msg, type) {
-  const el = document.getElementById('syncMsg');
+function setAuthMsg(msg, type) {
+  const el = document.getElementById('authMsg');
   el.textContent = msg;
   el.className = 'sync-msg ' + (type || '');
 }
 
-async function initCloudSync() {
-  ghToken = getStoredToken();
-  setSyncStatus('syncing', '连接中...');
-  await pullFromCloud();
-  // Auto-sync every 30 seconds
-  if (syncTimer) clearInterval(syncTimer);
-  syncTimer = setInterval(autoSync, 30000);
+function showLoginPanel() {
+  document.getElementById('loginPanel').style.display = 'flex';
 }
 
-async function pullFromCloud() {
+async function requestLoginCode() {
+  const email = document.getElementById('loginEmail').value.trim().toLowerCase();
+  if (!email) return setAuthMsg('请输入邮箱', 'error');
   try {
-    const url = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${GITHUB_DATA_PATH}`;
-    const headers = { 'Accept': 'application/vnd.github.v3+json' };
-    if (ghToken) headers['Authorization'] = `token ${ghToken}`;
-    const resp = await fetch(url, { headers });
-    if (resp.status === 404) {
-      // File doesn't exist yet, create it
-      cloudSHA = '';
-      setSyncStatus('online', '云端就绪（首次使用）');
-      setSyncMsg('编辑后会自动同步到云端', 'success');
-      return true;
-    }
-    if (!resp.ok) throw new Error('GitHub API: ' + resp.status);
-    const data = await resp.json();
-    cloudSHA = data.sha;
-    const binary = atob(data.content);
-    const bytes = new Uint8Array(binary.length);
-    for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
-    const content = JSON.parse(new TextDecoder('utf-8').decode(bytes));
-    // Clean cloud data: strip any garbled progress keys, ensure valid steps
-    for (const id in content) {
-      const entry = content[id];
-      if (!entry.progress) entry.progress = {};
-      // Remove any key that's not a valid step
-      const validSteps = ['网申','测评','笔试','一面','二面','HR面','OFFER'];
-      const cleaned = {};
-      validSteps.forEach(s => {
-        cleaned[s] = entry.progress[s] || {status:'pending', date:''};
-      });
-      entry.progress = cleaned;
-    }
-    // Merge: start with defaults, overlay cloud data
-    userState = JSON.parse(JSON.stringify(DEFAULT_USER_DATA));
-    for (const id in content) {
-      if (content[id].appliedPosition) userState[id] = content[id];
-    }
-    saveState();
-    renderCompanies();
-    lastSyncTime = new Date();
-    if (ghToken) {
-      setSyncStatus('online', '已连接云端');
-      setSyncMsg('同步成功 ' + lastSyncTime.toLocaleTimeString(), 'success');
-    } else {
-      setSyncStatus('online', '已拉取云端数据');
-      setSyncMsg('已加载投递记录。如需编辑同步，请点击「设置同步」输入Token', 'success');
-    }
-    updateSyncTime();
-    return true;
-  } catch(e) {
-    setSyncStatus('offline', '同步失败');
-    setSyncMsg('错误: ' + e.message, 'error');
-    return false;
-  }
-}
-
-async function pushToCloud() {
-  if (!ghToken) return false;
-  setSyncStatus('syncing', '同步中...');
-  try {
-    const content = btoa(unescape(encodeURIComponent(JSON.stringify(userState, null, 2))));
-    const url = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${GITHUB_DATA_PATH}`;
-    const body = {
-      message: 'Update tracker data ' + new Date().toISOString(),
-      content: content
-    };
-    if (cloudSHA) body.sha = cloudSHA;
-    const resp = await fetch(url, {
-      method: 'PUT',
-      headers: { 'Authorization': `token ${ghToken}`, 'Accept': 'application/vnd.github.v3+json', 'Content-Type': 'application/json' },
-      body: JSON.stringify(body)
+    setAuthMsg('正在发送验证码...', '');
+    const { error } = await supabaseClient.auth.signInWithOtp({
+      email,
+      options: { shouldCreateUser: true },
     });
-    if (resp.status === 409) {
-      // Conflict, pull first then retry
-      setSyncMsg('检测到冲突，正在合并...', '');
-      await pullFromCloud();
-      return pushToCloud();
-    }
-    if (!resp.ok) throw new Error('GitHub API: ' + resp.status);
-    const data = await resp.json();
-    cloudSHA = data.content.sha;
-    lastSyncTime = new Date();
-    setSyncStatus('online', '已连接云端');
-    setSyncMsg('已同步 ' + lastSyncTime.toLocaleTimeString(), 'success');
-    updateSyncTime();
-    return true;
-  } catch(e) {
-    setSyncStatus('offline', '同步失败');
-    setSyncMsg('错误: ' + e.message, 'error');
-    return false;
+    if (error) throw error;
+    setAuthMsg('验证码已发送，请检查邮箱', 'success');
+  } catch (err) {
+    setAuthMsg('发送失败：' + err.message, 'error');
   }
 }
 
-let pushTimer = null;
-function schedulePush() {
-  // Debounce: wait 2s after last edit before pushing
-  if (pushTimer) clearTimeout(pushTimer);
-  pushTimer = setTimeout(() => { pushToCloud(); }, 2000);
-}
-
-async function autoSync() {
-  // Pull latest from cloud
-  await pullFromCloud();
-}
-
-async function syncNow() {
-  setSyncMsg('正在同步...', '');
-  if (!cloudReady) { setSyncMsg('正在拉取云端数据，请稍候...', ''); await pullFromCloud(); cloudReady = true; }
-  const ok = await pushToCloud();
-  if (ok) await pullFromCloud();
-}
-
-function updateSyncTime() {
-  const el = document.getElementById('syncTime');
-  if (lastSyncTime) {
-    el.textContent = '上次同步: ' + lastSyncTime.toLocaleTimeString();
+async function verifyLoginCode() {
+  const email = document.getElementById('loginEmail').value.trim().toLowerCase();
+  const code = document.getElementById('loginCode').value.trim();
+  if (!email || !code) return setAuthMsg('请输入邮箱和验证码', 'error');
+  try {
+    const { data, error } = await supabaseClient.auth.verifyOtp({ email, token: code, type: 'email' });
+    if (error) throw error;
+    currentUser = data.user;
+    document.getElementById('loginPanel').style.display = 'none';
+    await loadRemoteState();
+  } catch (err) {
+    setAuthMsg('登录失败：' + err.message, 'error');
   }
 }
 
-// ========== Utils ==========
-function escapeHtml(str) {
-  if (!str) return '';
-  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+function rowToState(row) {
+  return {
+    appliedPosition: row.applied_position || '',
+    status: row.status || 'pending',
+    notes: row.notes || '',
+    progress: row.progress || {},
+  };
 }
 
-// ========== Default Data (from Excel, embedded to prevent encoding issues) ==========
-const DEFAULT_USER_DATA = {
-  "baidu": {"appliedPosition":"管培生其他方向——oversea sales（自己补充）","progress":{"网申":{"status":"done","date":"7.10"},"测评":{"status":"pending","date":""},"笔试":{"status":"pending","date":""},"一面":{"status":"pending","date":""},"二面":{"status":"pending","date":""},"HR面":{"status":"pending","date":""},"OFFER":{"status":"pending","date":""}},"notes":"","status":"applied"},
-  "pdd": {"appliedPosition":"市场管培生上海KOL运营（目前开放了上海）第二志愿是商务管培","progress":{"网申":{"status":"done","date":"7.10"},"测评":{"status":"pending","date":""},"笔试":{"status":"pending","date":""},"一面":{"status":"pending","date":""},"二面":{"status":"pending","date":""},"HR面":{"status":"pending","date":""},"OFFER":{"status":"pending","date":""}},"notes":"","status":"applied"},
-  "iflytek": {"appliedPosition":"非凡计划——营销方向","progress":{"网申":{"status":"done","date":"7.10"},"测评":{"status":"active","date":""},"笔试":{"status":"pending","date":""},"一面":{"status":"pending","date":""},"二面":{"status":"pending","date":""},"HR面":{"status":"pending","date":""},"OFFER":{"status":"pending","date":""}},"notes":"线上测评已发","status":"interviewing"},
-  "dji": {"appliedPosition":"海外销售岗","progress":{"网申":{"status":"done","date":"7.10"},"测评":{"status":"pending","date":""},"笔试":{"status":"pending","date":""},"一面":{"status":"pending","date":""},"二面":{"status":"pending","date":""},"HR面":{"status":"pending","date":""},"OFFER":{"status":"pending","date":""}},"notes":"","status":"applied"},
-  "huolala": {"appliedPosition":"全球拓展管培生","progress":{"网申":{"status":"done","date":"7.10"},"测评":{"status":"pending","date":""},"笔试":{"status":"pending","date":""},"一面":{"status":"pending","date":""},"二面":{"status":"pending","date":""},"HR面":{"status":"pending","date":""},"OFFER":{"status":"pending","date":""}},"notes":"","status":"applied"},
-  "deepseek": {"appliedPosition":"AGI核心业务管培","progress":{"网申":{"status":"done","date":"7.12"},"测评":{"status":"pending","date":""},"笔试":{"status":"pending","date":""},"一面":{"status":"pending","date":""},"二面":{"status":"pending","date":""},"HR面":{"status":"pending","date":""},"OFFER":{"status":"pending","date":""}},"notes":"","status":"applied"},
-  "xpeng": {"appliedPosition":"海外用户运营澳新地区","progress":{"网申":{"status":"done","date":"7.12"},"测评":{"status":"pending","date":""},"笔试":{"status":"pending","date":""},"一面":{"status":"pending","date":""},"二面":{"status":"pending","date":""},"HR面":{"status":"pending","date":""},"OFFER":{"status":"pending","date":""}},"notes":"","status":"applied"},
-  "zte": {"appliedPosition":"MKT经理","progress":{"网申":{"status":"done","date":"7.12"},"测评":{"status":"pending","date":""},"笔试":{"status":"pending","date":""},"一面":{"status":"pending","date":""},"二面":{"status":"pending","date":""},"HR面":{"status":"pending","date":""},"OFFER":{"status":"pending","date":""}},"notes":"","status":"applied"},
-  "gusheng": {"appliedPosition":"渠道营销 销售支持","progress":{"网申":{"status":"done","date":"7.12"},"测评":{"status":"pending","date":""},"笔试":{"status":"pending","date":""},"一面":{"status":"pending","date":""},"二面":{"status":"pending","date":""},"HR面":{"status":"pending","date":""},"OFFER":{"status":"pending","date":""}},"notes":"","status":"applied"},
-  "robosense": {"appliedPosition":"项目管理-机器人线","progress":{"网申":{"status":"done","date":"7.12"},"测评":{"status":"pending","date":""},"笔试":{"status":"pending","date":""},"一面":{"status":"pending","date":""},"二面":{"status":"pending","date":""},"HR面":{"status":"pending","date":""},"OFFER":{"status":"pending","date":""}},"notes":"","status":"applied"},
-  "pudu": {"appliedPosition":"海外销售欧洲日本韩国","progress":{"网申":{"status":"done","date":"7.12"},"测评":{"status":"pending","date":""},"笔试":{"status":"pending","date":""},"一面":{"status":"pending","date":""},"二面":{"status":"pending","date":""},"HR面":{"status":"pending","date":""},"OFFER":{"status":"pending","date":""}},"notes":"","status":"applied"},
-  "haid": {"appliedPosition":"鲸英领袖生","progress":{"网申":{"status":"done","date":"7.12"},"测评":{"status":"pending","date":""},"笔试":{"status":"pending","date":""},"一面":{"status":"pending","date":""},"二面":{"status":"pending","date":""},"HR面":{"status":"pending","date":""},"OFFER":{"status":"pending","date":""}},"notes":"","status":"applied"},
-  "hisense": {"appliedPosition":"海外品牌营销实习生","progress":{"网申":{"status":"done","date":"7.12"},"测评":{"status":"pending","date":""},"笔试":{"status":"pending","date":""},"一面":{"status":"pending","date":""},"二面":{"status":"pending","date":""},"HR面":{"status":"pending","date":""},"OFFER":{"status":"pending","date":""}},"notes":"","status":"applied"},
-  "unitree": {"appliedPosition":"海外销售","progress":{"网申":{"status":"done","date":"7.12"},"测评":{"status":"pending","date":""},"笔试":{"status":"pending","date":""},"一面":{"status":"pending","date":""},"二面":{"status":"pending","date":""},"HR面":{"status":"pending","date":""},"OFFER":{"status":"pending","date":""}},"notes":"","status":"applied"}
-};
+async function loadRemoteState() {
+  try {
+    setAuthStatus('syncing', '正在加载个人投递数据...');
+    const { data: sessionData, error: sessionError } = await supabaseClient.auth.getSession();
+    if (sessionError) throw sessionError;
+    currentUser = sessionData.session?.user || currentUser;
+    if (!currentUser) throw new Error('未登录');
 
-// ========== Override saveState to trigger cloud sync ==========
-let cloudReady = false;
-const _originalSaveState = saveState;
-saveState = function() {
-  localStorage.setItem('qiuzhao_tracker_v1', JSON.stringify(userState));
-  if (ghToken && cloudReady) schedulePush();
-};
+    const { data, error } = await supabaseClient
+      .from('applications')
+      .select('company_id, applied_position, status, notes, progress')
+      .order('updated_at', { ascending: false });
+    if (error) throw error;
+
+    userState = {};
+    (data || []).forEach(row => { userState[row.company_id] = rowToState(row); });
+    isLoggedIn = true;
+    setAuthStatus('online', '已登录：' + currentUser.email);
+    document.getElementById('loginBtn').style.display = 'none';
+    document.getElementById('logoutBtn').style.display = '';
+    setAuthMsg('个人数据已加载', 'success');
+    renderCompanies();
+  } catch (err) {
+    currentUser = null;
+    isLoggedIn = false;
+    userState = {};
+    setAuthStatus('offline', '未登录（当前仅展示公开公司信息）');
+    setAuthMsg(err.message === '未登录' ? '' : '加载失败：' + err.message, err.message === '未登录' ? '' : 'error');
+    renderCompanies();
+  }
+}
+
+async function persistCompanyState(companyId) {
+  if (!isLoggedIn || !currentUser) return;
+  const state = getCompanyState(companyId);
+  try {
+    const { error } = await supabaseClient.from('applications').upsert({
+      user_id: currentUser.id,
+      company_id: companyId,
+      applied_position: state.appliedPosition || '',
+      status: state.status || 'pending',
+      notes: state.notes || '',
+      progress: state.progress || {},
+    }, { onConflict: 'user_id,company_id' });
+    if (error) throw error;
+    setAuthMsg('已保存', 'success');
+  } catch (err) {
+    setAuthMsg('保存失败：' + err.message, 'error');
+  }
+}
+
+async function logout() {
+  await supabaseClient.auth.signOut();
+  currentUser = null;
+  isLoggedIn = false;
+  userState = {};
+  document.getElementById('loginBtn').style.display = '';
+  document.getElementById('logoutBtn').style.display = 'none';
+  setAuthStatus('offline', '未登录（当前仅展示公开公司信息）');
+  setAuthMsg('已退出登录', 'success');
+  renderCompanies();
+}
+
+async function initAuth() {
+  const { data } = await supabaseClient.auth.getSession();
+  currentUser = data.session?.user || null;
+  if (currentUser) {
+    await loadRemoteState();
+  } else {
+    isLoggedIn = false;
+    userState = {};
+    setAuthStatus('offline', '未登录（当前仅展示公开公司信息）');
+    renderCompanies();
+  }
+}
 
 // ========== Init ==========
-// Clear corrupted local data, use embedded defaults
-localStorage.removeItem('qiuzhao_tracker_v1');
-userState = JSON.parse(JSON.stringify(DEFAULT_USER_DATA));
-saveState();
-renderCompanies();
-// Then try to sync with cloud (cloud data may override if newer)
-initCloudSync().then(() => { cloudReady = true; });
-
+initAuth();
 </script>
 </body>
 </html>
