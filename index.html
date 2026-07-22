@@ -1978,6 +1978,7 @@ function clearData() {
 // ========== Supabase Auth Sync ==========
 const SUPABASE_URL = 'https://ftfjtbtqbozcmdbqevcr.supabase.co';
 const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_7zktrJsxfcrtba0VUBvf1A_7WeTMOoZ';
+const SITE_URL = 'https://sunyang1024929-svg.github.io/qiuzhao-tracker/';
 const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
 let currentUser = null;
 
@@ -2007,7 +2008,7 @@ async function requestLoginCode() {
       email,
       options: {
         shouldCreateUser: true,
-        emailRedirectTo: `${window.location.origin}${window.location.pathname}`,
+        emailRedirectTo: SITE_URL,
       },
     });
     if (error) throw error;
