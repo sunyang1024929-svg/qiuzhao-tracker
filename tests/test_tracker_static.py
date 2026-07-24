@@ -28,6 +28,16 @@ class TrackerStaticTests(unittest.TestCase):
             self.assertIn("launchStatus:", record)
             self.assertIn("launchDate:", record)
 
+    def test_officially_verified_zhongxing_launch_date_is_recorded(self):
+        page = Path(__file__).parents[1] / "index.html"
+        source = page.read_text(encoding="utf-8")
+        start = source.index('id:"zte"')
+        end = source.index("\n  },", start)
+        record = source[start:end]
+
+        self.assertIn('launchDate:"2026-06-29"', record)
+        self.assertIn('launchEvidence:"official"', record)
+
     def test_applied_records_override_unverified_launch_status(self):
         page = Path(__file__).parents[1] / "index.html"
         source = page.read_text(encoding="utf-8")

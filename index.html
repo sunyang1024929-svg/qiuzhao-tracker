@@ -321,6 +321,7 @@ const COMPANIES = [
     recPositions:["整合营销","大客户销售","商务拓展","市场营销","商业分析","产品运营","产品经理","管培生（产品/运营/财务/战略/HR方向）","人力资源","经营分析"],
     recNote:"管培生截止8月14日 | 销售类/综合类/管培生三通道互不冲突，可分别投递",
     deadline:"7月9日 - 次年6月（全年开放）", deadlineType:"open",
+    launchStatus:"open", launchDate:"", launchPrecision:"", launchEvidence:"official",
     website:"https://talent.baidu.com/jobs/list", websiteText:"talent.baidu.com/jobs",
     process:"网申内推（7/9起）→ 简历筛选 → 笔试（7月中旬-10月中旬每周1场）→ 面试（7/9起陆续安排）→ OFFER（11月起）| 无限复活机制，淘汰后可重新投递",
     location:"北京、上海、深圳、杭州、成都、郑州、广州、大连、苏州、厦门、重庆、香港、新加坡等"
@@ -349,7 +350,7 @@ const COMPANIES = [
     recPositions:["市场类（品牌/投放/社媒）","运营类（商家/品类/活动）","商业分析","管培生","语言类（小语种运营）","综合类"],
     recNote:"7大职类中4类适合文科 | 提前批不影响正式批投递 | 薪酬极具竞争力 | 工作地：上海",
     deadline:"提前批8月23日截止（正式批另行通知）", deadlineType:"open",
-    launchStatus:"open", launchDate:"2026-07", launchPrecision:"month",
+    launchStatus:"open", launchDate:"", launchPrecision:"", launchEvidence:"official",
     website:"https://careers.pddglobalhr.com/campus", websiteText:"careers.pddglobalhr.com/campus",
     process:"网申 → 简历筛选 → 笔试 → 面试 → OFFER | 提前批结果不影响正式批",
     location:"上海"
@@ -431,7 +432,7 @@ const COMPANIES = [
     recPositions:["市场（品牌/数字营销/公关）","销售","产品运营","电商运营","供应链管理","人力资源","法务","财务","项目管理"],
     recNote:"12大类100+岗位中营销类/职能类约30%适合文科 | 限投1个岗位 | 不设截止日，招满即止",
     deadline:"6月25日开启，不设截止日，招满即止", deadlineType:"open",
-    launchStatus:"open", launchDate:"2026-06-25", launchPrecision:"day",
+    launchStatus:"open", launchDate:"2026-06-25", launchPrecision:"day", launchEvidence:"official",
     website:"https://we.dji.com/zh-CN/campus", websiteText:"we.dji.com/zh-CN/campus",
     process:"简历投递 → 初筛复筛（7-9月，含测评/笔试）→ 面试（8-10月，线上为主）→ 结果反馈（10-11月）",
     location:"深圳、上海、北京"
@@ -1028,6 +1029,7 @@ const COMPANIES = [
     recPositions:["MKT经理","海外销售","品牌市场","产品运营","商务拓展","供应链管理","人力资源","财务管理"],
     recNote:"全球通信设备商 | MKT/海外销售类岗位丰富 | 港深双总部 | A股+H股上市",
     deadline:"已启动，招满即止",deadlineType:"open",
+    launchStatus:"open", launchDate:"2026-06-29", launchPrecision:"day", launchEvidence:"official",
     website:"https://job.zte.com.cn/",websiteText:"job.zte.com.cn",
     process:"网申 → 简历筛选 → 笔试 → 面试 → OFFER",
     location:"深圳、南京、上海、西安等",
@@ -1756,6 +1758,9 @@ function launchLabel(company) {
   if (normalized.launchStatus === 'not_open') return '招聘暂未开启（官网预告 / 待开放）';
   if (normalized.launchStatus !== 'open') return '待官网核验';
   const observed = normalized.applicationDate;
+  if (normalized.launchEvidence === 'official' && !normalized.launchDate) {
+    return '已开启（官网已确认，启动日期待官网核验）';
+  }
   if (normalized.launchEvidence === 'source_table' && !normalized.launchDate) {
     return '已开启（来源表，启动日期待官网核验）';
   }
