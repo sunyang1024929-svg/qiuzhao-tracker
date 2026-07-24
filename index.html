@@ -252,13 +252,22 @@ body {
 .sync-msg { font-size: 12px; color: var(--text-tertiary); margin-left: auto; }
 .sync-msg.error { color: var(--danger); }
 .sync-msg.success { color: var(--success); }
+.launch-meta { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0; font-size: 12px; }
+.launch-badge { padding: 3px 8px; border-radius: 999px; font-weight: 600; }
+.launch-badge.open { color: #0F6E56; background: #E1F5EE; }
+.launch-badge.not-open { color: #633806; background: #FAEEDA; }
+.filter-select { flex: 1 1 150px; min-width: 0; padding: 9px 10px; border: 1px solid var(--border-medium); border-radius: 6px; background: var(--bg-primary); color: var(--text-primary); }
+.lock-panel { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; padding: 10px 12px; background: #FAEEDA; border: 1px solid #E8C887; border-radius: var(--radius-md); margin: 14px 0; }
+.lock-panel.unlocked { background: #E1F5EE; border-color: #9AD7C5; }
+.lock-panel input { width: 100px; padding: 8px 10px; border: 1px solid var(--border-medium); border-radius: 5px; }
+.lock-note { font-size: 12px; color: var(--text-secondary); }
 </style>
 </head>
 <body>
 <div class="app">
   <div class="app-header">
     <div class="app-title">2027届秋招投递追踪器</div>
-    <div class="app-subtitle">聚焦营销/销售/GTM/运营/管培生方向 | 公开公司列表每日9:40自动更新 | 登录后查看和编辑个人投递记录</div>
+    <div class="app-subtitle">聚焦营销/销售/GTM/运营/管培生方向 | 公开公司列表每日9:40自动更新 | 输入操作密码后共同编辑</div>
   </div>
 
   <div class="stats-bar">
@@ -268,36 +277,24 @@ body {
     <div class="stat-card"><div class="stat-num" id="statOffer">0</div><div class="stat-label">已获OFFER</div></div>
   </div>
 
-  <div class="sync-bar" id="authBar">
-    <div class="sync-status"><div class="sync-dot offline" id="authDot"></div><span id="authStatusText">未登录（当前仅展示公开公司信息）</span></div>
-    <button class="sync-btn primary" id="loginBtn" onclick="showLoginPanel()">登录查看我的投递</button>
-    <button class="sync-btn" id="logoutBtn" onclick="logout()" style="display:none;">退出登录</button>
-    <button class="data-btn export" onclick="exportData()">导出备份</button>
-    <span class="sync-msg" id="authMsg"></span>
-  </div>
-  <div class="sync-bar" id="loginPanel" style="display:none;">
-    <span class="token-label">邮箱:</span>
-    <input type="email" class="token-input" id="loginEmail" placeholder="you@example.com">
-    <button class="sync-btn primary" id="requestCodeBtn" onclick="requestLoginCode()">发送登录链接</button>
-    <button class="sync-btn" onclick="document.getElementById('loginPanel').style.display='none'">取消</button>
-    <span class="sync-msg">登录链接 10 分钟内有效，仅用于登录你自己的账户</span>
+  <div class="lock-panel" id="lockPanel">
+    <strong id="lockStatus">只读浏览</strong>
+    <input type="password" id="unlockCode" inputmode="numeric" maxlength="4" placeholder="输入操作码">
+    <button class="sync-btn primary" onclick="unlockTracker()">解锁编辑</button>
+    <button class="sync-btn" id="lockButton" onclick="lockTracker()" style="display:none;">锁定</button>
+    <span class="lock-note" id="lockNote">输入 1024 后可填写投递岗位、进度、备注并使用筛选。</span>
   </div>
 
   <input type="text" class="search-box" id="searchBox" placeholder="搜索公司名、行业、岗位..." oninput="filterSearch()">
 
   <div class="filters" id="filterBar">
-    <button class="filter-btn active" onclick="setFilter('all')">全部</button>
-    <button class="filter-btn" onclick="setFilter('internet')">互联网/科技</button>
-    <button class="filter-btn" onclick="setFilter('game')">游戏</button>
-    <button class="filter-btn" onclick="setFilter('hardware')">硬件/半导体</button>
-    <button class="filter-btn" onclick="setFilter('robot')">机器人/航天</button>
-    <button class="filter-btn" onclick="setFilter('soe')">央企/军工</button>
-    <button class="filter-btn" onclick="setFilter('finance')">金融</button>
-    <button class="filter-btn" onclick="setFilter('consult')">咨询/外企</button>
-    <button class="filter-btn" onclick="setFilter('edu')">教育</button>
-    <button class="filter-btn" onclick="setFilter('auto')">汽车</button>
-    <button class="filter-btn" onclick="setFilter('applied')">已投递</button>
-    <button class="filter-btn" onclick="setFilter('pending')">未投递</button>
+    <select class="filter-select" id="industryFilter" onchange="updateFilters()" disabled><option value="all">全部行业</option></select>
+    <select class="filter-select" id="launchFilter" onchange="updateFilters()" disabled>
+      <option value="all">全部招聘状态</option><option value="open">已开启招聘</option><option value="not_open">未开启招聘</option>
+    </select>
+    <select class="filter-select" id="applicationFilter" onchange="updateFilters()" disabled>
+      <option value="all">全部投递情况</option><option value="applied">已投递</option><option value="pending">未投递</option>
+    </select>
   </div>
 
   <div class="company-list" id="companyList"></div>
@@ -308,8 +305,8 @@ body {
     2. <b>投递岗位</b>字段为空白，点击直接输入你投递的岗位名称<br>
     3. <b>投递进度</b>点击时间线上的圆圈切换状态：灰色(未开始) → 橙色(进行中) → 绿色(已完成)，点击日期文字可编辑日期<br>
     4. <b>备注</b>区域可自由记录面试经验、薪资信息等<br>
-    5. <b>云端同步</b>：点击「设置同步」输入GitHub Token，之后所有编辑自动同步到云端，任何设备都可查看和编辑<br>
-    6. 每天上午10:00定时任务自动搜索新增秋招公司并更新此网页<br><br>
+    5. 输入操作密码 <b>1024</b> 后，可编辑和筛选；编辑内容会同步到所有设备<br>
+    6. 每天上午9:40定时任务自动搜索新增秋招公司并更新此网页<br><br>
     <b>投递优先级建议</b>：百度管培生(8/14截止) → 京东TET管培生 → 拼多多市场/运营(8/23截止) → 贝恩AC(7/19或9/2截止) → 多益游戏运营(8/31截止)
   </div>
 </div>
@@ -1636,26 +1633,135 @@ const COMPANIES = [
   }
 ];
 
-// ========== Progress Steps ==========
+// ========== Shared Tracker State ==========
 const PROGRESS_STEPS = ["网申","测评","笔试","一面","二面","HR面","OFFER"];
-
-// ========== State ==========
-let currentFilter = 'all';
+const SUPABASE_URL = 'https://ftfjtbtqbozcmdbqevcr.supabase.co';
+const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_7zktrJsxfcrtba0VUBvf1A_7WeTMOoZ';
+const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
 let userState = {};
-let isLoggedIn = false;
+let isUnlocked = sessionStorage.getItem('qiuzhao_tracker_unlocked') === 'true';
+let filters = { industry: 'all', launch: 'all', application: 'all' };
+let saveTimer = null;
 
-// ========== Persistence (view-only cache; source of truth is backend when logged in) ==========
 function emptyCompanyState() {
   const state = { appliedPosition: '', progress: {}, notes: '', status: 'pending' };
-  PROGRESS_STEPS.forEach(s => { state.progress[s] = { status: 'pending', date: '' }; });
+  PROGRESS_STEPS.forEach(step => { state.progress[step] = { status: 'pending', date: '' }; });
   return state;
 }
+
 function getCompanyState(id) {
   if (!userState[id]) userState[id] = emptyCompanyState();
   return userState[id];
 }
+
+function parseLaunchInfo(company) {
+  if (company.launchStatus && company.launchDate !== undefined) return company;
+  const text = `${company.recNote || ''} ${company.process || ''} ${company.deadline || ''}`;
+  const match = text.match(/(?:启动|开放|网申|提前批)[^0-9]*(\d{1,2})[月./-](\d{1,2})/i) || text.match(/(\d{1,2})[月./-](\d{1,2})[^。；，,]{0,12}(?:启动|开放|网申)/i);
+  if (match) {
+    const year = new Date().getFullYear();
+    const month = String(match[1]).padStart(2, '0');
+    const day = String(match[2]).padStart(2, '0');
+    company.launchDate = `${year}-${month}-${day}`;
+    company.launchStatus = 'open';
+  } else {
+    company.launchDate = '';
+    company.launchStatus = 'not_open';
+  }
+  return company;
+}
+
+function launchLabel(company) {
+  const normalized = parseLaunchInfo(company);
+  if (normalized.launchStatus !== 'open') return '招聘暂未开启 / 启动时间待确认';
+  return `招聘已开启：${normalized.launchDate}`;
+}
+
+function sortedCompanies() {
+  return [...COMPANIES].map(parseLaunchInfo).sort((a, b) => {
+    if (a.launchStatus !== b.launchStatus) return a.launchStatus === 'open' ? -1 : 1;
+    if (a.launchStatus === 'open') return (b.launchDate || '').localeCompare(a.launchDate || '');
+    return a.name.localeCompare(b.name, 'zh-CN');
+  });
+}
+
+function updateLockUI() {
+  const panel = document.getElementById('lockPanel');
+  const status = document.getElementById('lockStatus');
+  const note = document.getElementById('lockNote');
+  const lockButton = document.getElementById('lockButton');
+  const code = document.getElementById('unlockCode');
+  panel.classList.toggle('unlocked', isUnlocked);
+  status.textContent = isUnlocked ? '已解锁：共享编辑已开启' : '只读浏览';
+  note.textContent = isUnlocked ? '所有修改会同步到所有已解锁设备。' : '输入 1024 后可填写投递岗位、进度、备注并使用筛选。';
+  lockButton.style.display = isUnlocked ? '' : 'none';
+  code.disabled = isUnlocked;
+  document.querySelectorAll('.filter-select').forEach(select => { select.disabled = !isUnlocked; });
+  document.getElementById('searchBox').disabled = !isUnlocked;
+}
+
+function unlockTracker() {
+  const code = document.getElementById('unlockCode');
+  if (code.value !== '1024') {
+    alert('操作密码不正确，请重新输入。');
+    code.select();
+    return;
+  }
+  isUnlocked = true;
+  sessionStorage.setItem('qiuzhao_tracker_unlocked', 'true');
+  updateLockUI();
+  renderCompanies();
+}
+
+function lockTracker() {
+  isUnlocked = false;
+  sessionStorage.removeItem('qiuzhao_tracker_unlocked');
+  document.getElementById('unlockCode').value = '';
+  updateLockUI();
+  renderCompanies();
+}
+
+function ensureUnlocked() {
+  if (isUnlocked) return true;
+  alert('请先输入操作密码 1024 解锁编辑。');
+  document.getElementById('unlockCode').focus();
+  return false;
+}
+
+async function loadSharedState() {
+  const { data, error } = await supabaseClient
+    .from('shared_tracker_state')
+    .select('data')
+    .eq('id', 'main')
+    .single();
+  if (error) {
+    alert('共享数据加载失败：' + error.message);
+    return;
+  }
+  userState = data?.data && typeof data.data === 'object' ? data.data : {};
+  renderCompanies();
+}
+
+async function refreshSharedState() {
+  const { data, error } = await supabaseClient
+    .from('shared_tracker_state')
+    .select('data')
+    .eq('id', 'main')
+    .single();
+  if (error || !data?.data || JSON.stringify(data.data) === JSON.stringify(userState)) return;
+  userState = data.data;
+  renderCompanies();
+}
+
 function saveState() {
-  // Local cache only for the current session; not used to gate visibility.
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(async () => {
+    const { error } = await supabaseClient
+      .from('shared_tracker_state')
+      .update({ data: userState })
+      .eq('id', 'main');
+    if (error) alert('共享数据保存失败：' + error.message);
+  }, 400);
 }
 
 // ========== Render ==========
@@ -1664,7 +1770,7 @@ function renderCompanies() {
   list.innerHTML = '';
   let visibleCount = 0;
 
-  COMPANIES.forEach(c => {
+  sortedCompanies().forEach(c => {
     if (!matchesFilter(c)) return;
     visibleCount++;
     const state = getCompanyState(c.id);
@@ -1686,6 +1792,8 @@ function renderCompanies() {
       : `<span class="card-applied-placeholder">点击展开填写投递岗位</span>`;
 
     const deadlineClass = c.deadlineType === 'urgent' ? 'deadline-urgent' : 'deadline-open';
+    const launchOpen = c.launchStatus === 'open';
+    const launchClass = launchOpen ? 'open' : 'not-open';
 
     card.innerHTML = `
       <div class="card-summary" onclick="toggleExpand('${c.id}')">
@@ -1693,6 +1801,7 @@ function renderCompanies() {
           <div class="company-name">${c.name}</div>
           <span class="industry-tag ${c.tagClass}">${c.tag}</span>
         </div>
+        <div class="launch-meta"><span class="launch-badge ${launchClass}">${launchLabel(c)}</span></div>
         <div class="card-deadline ${deadlineClass}">截止：${c.deadline}</div>
         <div>${appliedText}</div>
         <div class="progress-mini">${dotsHTML}</div>
@@ -1701,8 +1810,8 @@ function renderCompanies() {
       <div class="card-detail">
         <div class="detail-section">
           <div class="detail-label">投递岗位（可编辑）</div>
-          <div class="editable-field" contenteditable="${isLoggedIn ? 'true' : 'false'}" data-placeholder="${isLoggedIn ? '输入你投递的岗位，如：整合营销专员' : '登录后可查看和编辑你的投递岗位'}"
-            oninput="updateField('${c.id}','appliedPosition',this.innerText)">${isLoggedIn ? escapeHtml(state.appliedPosition) : ''}</div>
+          <div class="editable-field" contenteditable="${isUnlocked ? 'true' : 'false'}" data-placeholder="${isUnlocked ? '输入你投递的岗位，如：整合营销专员' : '输入 1024 解锁后可编辑'}"
+            oninput="updateField('${c.id}','appliedPosition',this.innerText)">${escapeHtml(state.appliedPosition)}</div>
         </div>
 
         <div class="detail-section">
@@ -1716,7 +1825,7 @@ function renderCompanies() {
 
         <div class="detail-section">
           <div class="detail-label">整体状态</div>
-          <select class="status-select" ${isLoggedIn ? '' : 'disabled'} onchange="updateStatus('${c.id}',this.value)">
+          <select class="status-select" ${isUnlocked ? '' : 'disabled'} onchange="updateStatus('${c.id}',this.value)">
             <option value="pending" ${state.status==='pending'?'selected':''}>未投递</option>
             <option value="applied" ${state.status==='applied'?'selected':''}>已投递</option>
             <option value="interviewing" ${state.status==='interviewing'?'selected':''}>面试中</option>
@@ -1741,6 +1850,7 @@ function renderCompanies() {
         <div class="detail-section">
           <div class="detail-label">招聘信息</div>
           <div class="info-grid">
+            <div class="info-label">招聘启动</div><div class="info-value">${launchLabel(c)}</div>
             <div class="info-label">截止时间</div><div class="info-value ${deadlineClass}">${c.deadline}</div>
             <div class="info-label">招聘官网</div><div class="info-value"><a href="${c.website}" target="_blank" class="info-link">${c.websiteText}</a></div>
             <div class="info-label">工作地点</div><div class="info-value">${c.location}</div>
@@ -1750,13 +1860,13 @@ function renderCompanies() {
 
         <div class="detail-section">
           <div class="detail-label">备注（可编辑）</div>
-          <textarea class="notes-area" ${isLoggedIn ? '' : 'disabled'} data-placeholder="${isLoggedIn ? '记录面试经验、薪资信息、联系人等...' : '登录后可查看和编辑备注'}"
-            oninput="updateField('${c.id}','notes',this.value)">${isLoggedIn ? escapeHtml(state.notes) : ''}</textarea>
+          <textarea class="notes-area" ${isUnlocked ? '' : 'disabled'} data-placeholder="${isUnlocked ? '记录面试经验、薪资信息、联系人等...' : '输入 1024 解锁后可编辑'}"
+            oninput="updateField('${c.id}','notes',this.value)">${escapeHtml(state.notes)}</textarea>
         </div>
 
         <div class="card-actions">
           ${c.website !== '待确认' ? `<a class="action-btn" href="${c.website}" target="_blank">前往官网投递 →</a>` : ''}
-          <button class="action-btn" onclick="resetProgress('${c.id}')">重置进度</button>
+          <button class="action-btn" ${isUnlocked ? '' : 'disabled'} onclick="resetProgress('${c.id}')">重置进度</button>
         </div>
       </div>
     `;
@@ -1778,9 +1888,9 @@ function renderTimeline(companyId, state) {
       <div class="timeline-step ${p.status}" onclick="cycleProgress('${companyId}','${step}')">
         <div class="step-circle">${num}</div>
         <div class="step-name">${step}</div>
-        <div class="step-date" contenteditable="${isLoggedIn ? 'true' : 'false'}" onclick="event.stopPropagation()"
+        <div class="step-date" contenteditable="${isUnlocked ? 'true' : 'false'}" onclick="event.stopPropagation()"
           oninput="updateProgressDate('${companyId}','${step}',this.innerText)"
-          data-placeholder="${isLoggedIn ? '日期' : ''}">${isLoggedIn && p.date ? escapeHtml(p.date) : ''}</div>
+          data-placeholder="${isUnlocked ? '日期' : ''}">${p.date ? escapeHtml(p.date) : ''}</div>
       </div>
     `;
     if (i < PROGRESS_STEPS.length - 1) {
@@ -1796,18 +1906,10 @@ function toggleExpand(id) {
   state.expanded = !state.expanded;
   const card = document.getElementById('card-' + id);
   if (card) card.classList.toggle('expanded');
-  saveState();
-}
-
-function ensureLoggedIn() {
-  if (isLoggedIn) return true;
-  setAuthMsg('请先登录邮箱账号，再编辑个人投递信息', 'error');
-  showLoginPanel();
-  return false;
 }
 
 function cycleProgress(companyId, stepName) {
-  if (!ensureLoggedIn()) return;
+  if (!ensureUnlocked()) return;
   const state = getCompanyState(companyId);
   const p = state.progress[stepName];
   const cycle = ['pending', 'active', 'done'];
@@ -1819,19 +1921,17 @@ function cycleProgress(companyId, stepName) {
   document.getElementById('timeline-' + companyId).innerHTML = renderTimeline(companyId, state);
   updateMiniDots(companyId);
   updateStats();
-  persistCompanyState(companyId);
 }
 
 function updateProgressDate(companyId, stepName, value) {
-  if (!ensureLoggedIn()) return;
+  if (!ensureUnlocked()) return;
   const state = getCompanyState(companyId);
   state.progress[stepName].date = value.trim();
   saveState();
-  persistCompanyState(companyId);
 }
 
 function updateField(companyId, field, value) {
-  if (!ensureLoggedIn()) return;
+  if (!ensureUnlocked()) return;
   const state = getCompanyState(companyId);
   state[field] = value;
   saveState();
@@ -1852,50 +1952,41 @@ function updateField(companyId, field, value) {
     }
     updateStats();
   }
-  persistCompanyState(companyId);
 }
 
 function updateStatus(companyId, status) {
-  if (!ensureLoggedIn()) return;
+  if (!ensureUnlocked()) return;
   getCompanyState(companyId).status = status;
   saveState();
   updateStats();
-  persistCompanyState(companyId);
 }
 
 function resetProgress(companyId) {
-  if (!ensureLoggedIn()) return;
+  if (!ensureUnlocked()) return;
   if (!confirm('确定要重置该公司的投递进度吗？')) return;
   const state = getCompanyState(companyId);
   PROGRESS_STEPS.forEach(s => { state.progress[s] = { status: 'pending', date: '' }; });
   state.status = 'pending';
   saveState();
   renderCompanies();
-  persistCompanyState(companyId);
 }
 
 // ========== Filters ==========
-function setFilter(cat) {
-  currentFilter = cat;
-  document.querySelectorAll('.filter-btn').forEach(b => {
-    b.classList.toggle('active', b.textContent === getFilterLabel(cat) || (cat === 'all' && b.textContent === '全部'));
-  });
-  // More robust active toggle
-  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-  const btns = document.querySelectorAll('.filter-btn');
-  const labels = {
-    all:'全部', internet:'互联网/科技', game:'游戏', hardware:'硬件/半导体', robot:'机器人/航天',
-    soe:'央企/军工', finance:'金融', consult:'咨询/外企', edu:'教育', auto:'汽车',
-    applied:'已投递', pending:'未投递'
-  };
-  btns.forEach(b => { if (b.textContent.trim() === labels[cat]) b.classList.add('active'); });
-
-  renderCompanies();
+function populateIndustryFilter() {
+  const select = document.getElementById('industryFilter');
+  const categories = [...new Map(COMPANIES.map(company => [company.cat, company.tag])).entries()]
+    .sort((a, b) => a[1].localeCompare(b[1], 'zh-CN'));
+  select.innerHTML = '<option value="all">全部行业</option>' + categories.map(([value, label]) => `<option value="${value}">${label}</option>`).join('');
 }
 
-function getFilterLabel(cat) {
-  const labels = { all:'全部', internet:'互联网/科技', game:'游戏', hardware:'硬件/半导体', robot:'机器人/航天', soe:'央企/军工', finance:'金融', consult:'咨询/外企', edu:'教育', auto:'汽车', applied:'已投递', pending:'未投递' };
-  return labels[cat] || cat;
+function updateFilters() {
+  if (!ensureUnlocked()) return;
+  filters = {
+    industry: document.getElementById('industryFilter').value,
+    launch: document.getElementById('launchFilter').value,
+    application: document.getElementById('applicationFilter').value,
+  };
+  renderCompanies();
 }
 
 function matchesFilter(c) {
@@ -1907,10 +1998,11 @@ function matchesFilter(c) {
     if (!haystack.includes(search)) return false;
   }
 
-  if (currentFilter === 'all') return true;
-  if (currentFilter === 'applied') return state.status !== 'pending';
-  if (currentFilter === 'pending') return state.status === 'pending';
-  return c.cat === currentFilter;
+  if (filters.industry !== 'all' && c.cat !== filters.industry) return false;
+  if (filters.launch !== 'all' && c.launchStatus !== filters.launch) return false;
+  if (filters.application === 'applied' && state.status === 'pending') return false;
+  if (filters.application === 'pending' && state.status !== 'pending') return false;
+  return true;
 }
 
 function filterSearch() { renderCompanies(); }
@@ -1943,7 +2035,7 @@ function exportData() {
 }
 
 function importData() {
-  if (!ensureLoggedIn()) return;
+  if (!ensureUnlocked()) return;
   const input = document.createElement('input');
   input.type = 'file';
   input.accept = '.json';
@@ -1967,151 +2059,19 @@ function importData() {
 }
 
 function clearData() {
-  if (!ensureLoggedIn()) return;
+  if (!ensureUnlocked()) return;
   if (!confirm('确定要清空所有投递记录吗？此操作不可撤销！')) return;
   if (!confirm('再次确认：所有公司的投递岗位、进度、备注都将被删除！')) return;
   userState = {};
-  localStorage.removeItem('qiuzhao_tracker_v1');
+  saveState();
   renderCompanies();
 }
-
-// ========== Supabase Auth Sync ==========
-const SUPABASE_URL = 'https://ftfjtbtqbozcmdbqevcr.supabase.co';
-const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_7zktrJsxfcrtba0VUBvf1A_7WeTMOoZ';
-const SITE_URL = 'https://sunyang1024929-svg.github.io/qiuzhao-tracker/';
-const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
-let currentUser = null;
-
-function setAuthStatus(status, text) {
-  const dot = document.getElementById('authDot');
-  const label = document.getElementById('authStatusText');
-  dot.className = 'sync-dot ' + status;
-  label.textContent = text;
-}
-
-function setAuthMsg(msg, type) {
-  const el = document.getElementById('authMsg');
-  el.textContent = msg;
-  el.className = 'sync-msg ' + (type || '');
-}
-
-function showLoginPanel() {
-  document.getElementById('loginPanel').style.display = 'flex';
-}
-
-async function requestLoginCode() {
-  const email = document.getElementById('loginEmail').value.trim().toLowerCase();
-  if (!email) return setAuthMsg('请输入邮箱', 'error');
-  try {
-    setAuthMsg('正在发送登录链接...', '');
-    const { error } = await supabaseClient.auth.signInWithOtp({
-      email,
-      options: {
-        shouldCreateUser: true,
-        emailRedirectTo: SITE_URL,
-      },
-    });
-    if (error) throw error;
-    setAuthMsg('登录链接已发送，请打开邮箱并点击链接', 'success');
-  } catch (err) {
-    setAuthMsg('发送失败：' + err.message, 'error');
-  }
-}
-
-function rowToState(row) {
-  return {
-    appliedPosition: row.applied_position || '',
-    status: row.status || 'pending',
-    notes: row.notes || '',
-    progress: row.progress || {},
-  };
-}
-
-async function loadRemoteState() {
-  try {
-    setAuthStatus('syncing', '正在加载个人投递数据...');
-    const { data: sessionData, error: sessionError } = await supabaseClient.auth.getSession();
-    if (sessionError) throw sessionError;
-    currentUser = sessionData.session?.user || currentUser;
-    if (!currentUser) throw new Error('未登录');
-
-    const { data, error } = await supabaseClient
-      .from('applications')
-      .select('company_id, applied_position, status, notes, progress')
-      .order('updated_at', { ascending: false });
-    if (error) throw error;
-
-    userState = {};
-    (data || []).forEach(row => { userState[row.company_id] = rowToState(row); });
-    isLoggedIn = true;
-    setAuthStatus('online', '已登录：' + currentUser.email);
-    document.getElementById('loginBtn').style.display = 'none';
-    document.getElementById('logoutBtn').style.display = '';
-    setAuthMsg('个人数据已加载', 'success');
-    renderCompanies();
-  } catch (err) {
-    currentUser = null;
-    isLoggedIn = false;
-    userState = {};
-    setAuthStatus('offline', '未登录（当前仅展示公开公司信息）');
-    setAuthMsg(err.message === '未登录' ? '' : '加载失败：' + err.message, err.message === '未登录' ? '' : 'error');
-    renderCompanies();
-  }
-}
-
-async function persistCompanyState(companyId) {
-  if (!isLoggedIn || !currentUser) return;
-  const state = getCompanyState(companyId);
-  try {
-    const { error } = await supabaseClient.from('applications').upsert({
-      user_id: currentUser.id,
-      company_id: companyId,
-      applied_position: state.appliedPosition || '',
-      status: state.status || 'pending',
-      notes: state.notes || '',
-      progress: state.progress || {},
-    }, { onConflict: 'user_id,company_id' });
-    if (error) throw error;
-    setAuthMsg('已保存', 'success');
-  } catch (err) {
-    setAuthMsg('保存失败：' + err.message, 'error');
-  }
-}
-
-async function logout() {
-  await supabaseClient.auth.signOut();
-  currentUser = null;
-  isLoggedIn = false;
-  userState = {};
-  document.getElementById('loginBtn').style.display = '';
-  document.getElementById('logoutBtn').style.display = 'none';
-  setAuthStatus('offline', '未登录（当前仅展示公开公司信息）');
-  setAuthMsg('已退出登录', 'success');
-  renderCompanies();
-}
-
-async function initAuth() {
-  const { data } = await supabaseClient.auth.getSession();
-  currentUser = data.session?.user || null;
-  if (currentUser) {
-    await loadRemoteState();
-  } else {
-    isLoggedIn = false;
-    userState = {};
-    setAuthStatus('offline', '未登录（当前仅展示公开公司信息）');
-    renderCompanies();
-  }
-}
-
-supabaseClient.auth.onAuthStateChange((event, session) => {
-  if (event !== 'SIGNED_IN' || !session?.user) return;
-  currentUser = session.user;
-  document.getElementById('loginPanel').style.display = 'none';
-  loadRemoteState();
-});
 
 // ========== Init ==========
-initAuth();
+populateIndustryFilter();
+updateLockUI();
+loadSharedState();
+window.setInterval(refreshSharedState, 15000);
 </script>
 </body>
 </html>

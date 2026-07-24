@@ -132,6 +132,23 @@ function extractDeadline(text) {
   return '以招聘官网最新公告为准';
 }
 
+function extractLaunchInfo(text) {
+  const patterns = [
+    /(?:提前批|秋招|校园招聘|网申)[^。；;\n]{0,24}?(?:于)?\s*(\d{1,2})月(\d{1,2})日[^。；;\n]{0,12}(?:启动|开放|开始)/,
+    /(\d{1,2})月(\d{1,2})日[^。；;\n]{0,12}(?:启动|开放|开始)/,
+    /(?:启动|开放|开始)[^。；;\n]{0,16}(\d{1,2})月(\d{1,2})日/,
+  ];
+  for (const pattern of patterns) {
+    const match = text.match(pattern);
+    if (!match) continue;
+    return {
+      launchStatus: 'open',
+      launchDate: `${new Date().getFullYear()}-${String(match[1]).padStart(2, '0')}-${String(match[2]).padStart(2, '0')}`,
+    };
+  }
+  return { launchStatus: 'not_open', launchDate: '' };
+}
+
 function extractPositions(text) {
   const common = ['产品经理', '产品运营', '市场营销', '商业分析', '销售管培生', '品牌营销', '人力资源', '财务管理', '战略运营'];
   const found = common.filter(p => text.includes(p));
@@ -171,6 +188,7 @@ async function buildCandidate(company) {
   const category = inferCategory(company);
   const recPositions = extractPositions(sourceText);
   const deadline = extractDeadline(sourceText);
+  const launch = extractLaunchInfo(sourceText);
   const id = slugify(company.name);
   let hostname = '';
   try { hostname = new URL(company.website).hostname.replace(/^www\./, ''); } catch {}
@@ -185,6 +203,8 @@ async function buildCandidate(company) {
     recNote: `自动发现：${deadline} | 请以官网公告为准`,
     deadline,
     deadlineType: /截止|\d{1,2}月/.test(deadline) ? 'normal' : 'open',
+    launchStatus: launch.launchStatus,
+    launchDate: launch.launchDate,
     website: company.website,
     websiteText: hostname || company.website,
     process: '网申 → 简历筛选 → 测评/笔试 → 面试 → OFFER | 以招聘官网公告为准',
@@ -199,6 +219,7 @@ function toCompanyLiteral(c) {
     recPositions:${q(c.recPositions)},
     recNote:${q(c.recNote)},
     deadline:${q(c.deadline)}, deadlineType:${q(c.deadlineType)},
+    launchStatus:${q(c.launchStatus)}, launchDate:${q(c.launchDate)},
     website:${q(c.website)}, websiteText:${q(c.websiteText)},
     process:${q(c.process)},
     location:${q(c.location)}
