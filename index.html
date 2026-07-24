@@ -1654,6 +1654,33 @@ function getCompanyState(id) {
   return userState[id];
 }
 
+function escapeHtml(value) {
+  return String(value ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
+
+function autoUpdateStatus(state) {
+  const steps = Object.values(state.progress || {});
+  if (steps.some(step => step.status === 'done' || step.status === 'active')) {
+    state.status = steps.some(step => step.status === 'active') ? 'interviewing' : 'applied';
+  }
+}
+
+function updateMiniDots(companyId) {
+  const card = document.getElementById('card-' + companyId);
+  if (!card) return;
+  const state = getCompanyState(companyId);
+  const dots = [...card.querySelectorAll('.progress-dot')];
+  PROGRESS_STEPS.forEach((step, index) => {
+    dots[index]?.classList.remove('pending', 'active', 'done');
+    dots[index]?.classList.add(state.progress[step]?.status || 'pending');
+  });
+}
+
 function parseLaunchInfo(company) {
   if (company.launchStatus && company.launchDate !== undefined) return company;
   const text = `${company.recNote || ''} ${company.process || ''} ${company.deadline || ''}`;
