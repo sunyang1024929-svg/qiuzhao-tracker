@@ -27,3 +27,10 @@ class TrackerStaticTests(unittest.TestCase):
             record = source[start:end]
             self.assertIn("launchStatus:", record)
             self.assertIn("launchDate:", record)
+
+    def test_applied_records_override_unverified_launch_status(self):
+        page = Path(__file__).parents[1] / "index.html"
+        source = page.read_text(encoding="utf-8")
+
+        self.assertIn("launchEvidence: 'application'", source)
+        self.assertIn("已于 ${observed} 投递", source)

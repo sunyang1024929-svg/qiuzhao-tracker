@@ -1688,11 +1688,23 @@ function updateMiniDots(companyId) {
 }
 
 function parseLaunchInfo(company) {
-  return {
+  const base = {
     ...company,
     launchStatus: company.launchStatus || 'unverified',
     launchDate: company.launchDate || '',
     launchPrecision: company.launchPrecision || '',
+  };
+  const state = userState[company.id];
+  const appliedDate = state?.progress?.['网申']?.date || '';
+  const isApplied = state?.status && state.status !== 'pending';
+  if (!isApplied) return base;
+
+  return {
+    ...base,
+    launchStatus: 'open',
+    launchEvidence: 'application',
+    applicationDate: appliedDate,
+    launchSortDate: base.launchDate || appliedDate,
   };
 }
 
@@ -1700,16 +1712,20 @@ function launchLabel(company) {
   const normalized = parseLaunchInfo(company);
   if (normalized.launchStatus === 'not_open') return '招聘暂未开启（官网预告 / 待开放）';
   if (normalized.launchStatus !== 'open') return '待官网核验';
+  const observed = normalized.applicationDate;
+  if (normalized.launchEvidence === 'application' && !normalized.launchDate) {
+    return observed ? `招聘已开启（已于 ${observed} 投递；启动日期待官网核验）` : '招聘已开启（已有投递记录；启动日期待官网核验）';
+  }
   const [year, month, day] = normalized.launchDate.split('-');
   const date = normalized.launchPrecision === 'day' ? `${year} 年 ${month} 月 ${day} 日` : `${year} 年 ${month} 月`;
-  return `招聘已开启：${date}`;
+  return observed ? `招聘已开启：${date}（已于 ${observed} 投递）` : `招聘已开启：${date}`;
 }
 
 function sortedCompanies() {
   return [...COMPANIES].map(parseLaunchInfo).sort((a, b) => {
     const rank = { open: 0, not_open: 1, unverified: 2 };
     if (a.launchStatus !== b.launchStatus) return rank[a.launchStatus] - rank[b.launchStatus];
-    if (a.launchStatus === 'open') return (b.launchDate || '').localeCompare(a.launchDate || '');
+    if (a.launchStatus === 'open') return (b.launchSortDate || b.launchDate || '').localeCompare(a.launchSortDate || a.launchDate || '');
     return a.name.localeCompare(b.name, 'zh-CN');
   });
 }
