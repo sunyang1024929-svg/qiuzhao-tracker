@@ -43,3 +43,5 @@ class TrackerStaticTests(unittest.TestCase):
         self.assertIn("mergeExcelSupplements()", source)
         self.assertIn("sourceUrl", source)
         self.assertIn("EXCEL_2027_EXISTING_DETAILS", source)
+        self.assertIn("launchEvidence = 'source_table'", source)
+        self.assertIn("已开启（来源表，启动日期待官网核验）", source)

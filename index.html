@@ -1658,6 +1658,10 @@ function mergeExcelSupplements() {
     existing.sourceText = detail.sourceText;
     if (!existing.location || existing.location.includes('以招聘')) existing.location = detail.location;
     if (!existing.deadline || existing.deadline.includes('待确认')) existing.deadline = detail.deadline;
+    if (!existing.launchStatus || existing.launchStatus === 'unverified') {
+      existing.launchStatus = 'open';
+      existing.launchEvidence = 'source_table';
+    }
   }
 
   for (const supplement of window.EXCEL_2027_SUPPLEMENTS || []) {
@@ -1669,6 +1673,8 @@ function mergeExcelSupplements() {
       existing.sourceText = `2027届秋招信息汇总表：${supplement.deadline}`;
       continue;
     }
+    supplement.launchStatus = 'open';
+    supplement.launchEvidence = 'source_table';
     COMPANIES.push(supplement);
   }
 }
@@ -1729,6 +1735,7 @@ function parseLaunchInfo(company) {
     launchStatus: company.launchStatus || 'unverified',
     launchDate: company.launchDate || '',
     launchPrecision: company.launchPrecision || '',
+    launchEvidence: company.launchEvidence || '',
   };
   const state = userState[company.id];
   const appliedDate = state?.progress?.['网申']?.date || '';
@@ -1749,6 +1756,9 @@ function launchLabel(company) {
   if (normalized.launchStatus === 'not_open') return '招聘暂未开启（官网预告 / 待开放）';
   if (normalized.launchStatus !== 'open') return '待官网核验';
   const observed = normalized.applicationDate;
+  if (normalized.launchEvidence === 'source_table' && !normalized.launchDate) {
+    return '已开启（来源表，启动日期待官网核验）';
+  }
   if (normalized.launchEvidence === 'application' && !normalized.launchDate) {
     return observed ? `招聘已开启（已于 ${observed} 投递；启动日期待官网核验）` : '招聘已开启（已有投递记录；启动日期待官网核验）';
   }
