@@ -312,6 +312,7 @@ body {
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="excel-2027-supplements.js"></script>
 <script>
 // ========== Company Data ==========
 const COMPANIES = [
@@ -1639,6 +1640,41 @@ const COMPANIES = [
   }
 ];
 
+function normalizeCompanyName(name) {
+  return String(name)
+    .replace(/[（(].*?[）)]/g, '')
+    .replace(/集团|中国区|DJI|大疆|科技/g, '')
+    .replace(/[\s（）()\-—_·.]/g, '')
+    .toLowerCase();
+}
+
+function mergeExcelSupplements() {
+  for (const detail of window.EXCEL_2027_EXISTING_DETAILS || []) {
+    const existing = COMPANIES.find(company => normalizeCompanyName(company.name) === normalizeCompanyName(detail.name));
+    if (!existing) continue;
+    existing.allPositions = [...new Set([...existing.allPositions, ...detail.allPositions])];
+    existing.recPositions = [...new Set([...existing.recPositions, ...detail.recPositions])];
+    existing.sourceUrl = detail.sourceUrl;
+    existing.sourceText = detail.sourceText;
+    if (!existing.location || existing.location.includes('以招聘')) existing.location = detail.location;
+    if (!existing.deadline || existing.deadline.includes('待确认')) existing.deadline = detail.deadline;
+  }
+
+  for (const supplement of window.EXCEL_2027_SUPPLEMENTS || []) {
+    const existing = COMPANIES.find(company => normalizeCompanyName(company.name) === normalizeCompanyName(supplement.name));
+    if (existing) {
+      existing.allPositions = [...new Set([...existing.allPositions, ...supplement.allPositions])];
+      existing.recPositions = [...new Set([...existing.recPositions, ...supplement.recPositions])];
+      existing.sourceUrl = supplement.website;
+      existing.sourceText = `2027届秋招信息汇总表：${supplement.deadline}`;
+      continue;
+    }
+    COMPANIES.push(supplement);
+  }
+}
+
+mergeExcelSupplements();
+
 // ========== Shared Tracker State ==========
 const PROGRESS_STEPS = ["网申","测评","笔试","一面","二面","HR面","OFFER"];
 const SUPABASE_URL = 'https://ftfjtbtqbozcmdbqevcr.supabase.co';
@@ -1897,7 +1933,8 @@ function renderCompanies() {
           <div class="info-grid">
             <div class="info-label">招聘启动</div><div class="info-value">${launchLabel(c)}</div>
             <div class="info-label">截止时间</div><div class="info-value ${deadlineClass}">${c.deadline}</div>
-            <div class="info-label">招聘官网</div><div class="info-value"><a href="${c.website}" target="_blank" class="info-link">${c.websiteText}</a></div>
+            <div class="info-label">${c.sourceType === 'excel' ? '招聘详情来源' : '招聘官网'}</div><div class="info-value"><a href="${c.website}" target="_blank" class="info-link">${c.websiteText}</a></div>
+            ${c.sourceUrl ? `<div class="info-label">补充来源</div><div class="info-value"><a href="${c.sourceUrl}" target="_blank" class="info-link">${c.sourceText || '2027届秋招信息汇总表'}</a></div>` : ''}
             <div class="info-label">工作地点</div><div class="info-value">${c.location}</div>
             <div class="info-label">招聘流程</div><div class="info-value">${c.process}</div>
           </div>
@@ -1910,7 +1947,7 @@ function renderCompanies() {
         </div>
 
         <div class="card-actions">
-          ${c.website !== '待确认' ? `<a class="action-btn" href="${c.website}" target="_blank">前往官网投递 →</a>` : ''}
+          ${c.website !== '待确认' ? `<a class="action-btn" href="${c.website}" target="_blank">${c.sourceType === 'excel' ? '查看招聘详情 →' : '前往官网投递 →'}</a>` : ''}
           <button class="action-btn" ${isUnlocked ? '' : 'disabled'} onclick="resetProgress('${c.id}')">重置进度</button>
         </div>
       </div>

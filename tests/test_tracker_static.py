@@ -34,3 +34,12 @@ class TrackerStaticTests(unittest.TestCase):
 
         self.assertIn("launchEvidence: 'application'", source)
         self.assertIn("已于 ${observed} 投递", source)
+
+    def test_excel_2027_supplements_are_loaded_without_overwriting_official_links(self):
+        page = Path(__file__).parents[1] / "index.html"
+        source = page.read_text(encoding="utf-8")
+
+        self.assertIn('src="excel-2027-supplements.js"', source)
+        self.assertIn("mergeExcelSupplements()", source)
+        self.assertIn("sourceUrl", source)
+        self.assertIn("EXCEL_2027_EXISTING_DETAILS", source)
