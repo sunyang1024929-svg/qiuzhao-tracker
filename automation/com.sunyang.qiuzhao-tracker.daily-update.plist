@@ -7,10 +7,10 @@
   <key>ProgramArguments</key>
   <array>
     <string>/bin/zsh</string>
-    <string>/Users/sunyangsunshine/Documents/秋招网站链接/qiuzhao-tracker/scripts/run-daily-update.sh</string>
+    <string>/Users/sunyangsunshine/qiuzhao-tracker/scripts/run-daily-update.sh</string>
   </array>
   <key>WorkingDirectory</key>
-  <string>/Users/sunyangsunshine/Documents/秋招网站链接/qiuzhao-tracker</string>
+  <string>/Users/sunyangsunshine/qiuzhao-tracker</string>
   <key>StartCalendarInterval</key>
   <dict>
     <key>Hour</key>
