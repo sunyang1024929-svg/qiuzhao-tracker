@@ -83,3 +83,13 @@ class TrackerStaticTests(unittest.TestCase):
         self.assertIn("function getLaunchOverride(", source)
         self.assertIn("function updateLaunchDate(", source)
         self.assertIn('class="launch-date-input"', source)
+
+    def test_cards_default_to_collapsed_and_notes_render_links(self):
+        page = Path(__file__).parents[1] / "index.html"
+        source = page.read_text(encoding="utf-8")
+
+        self.assertIn("let expandedCompanyIds = new Set()", source)
+        self.assertIn("expandedCompanyIds.has(c.id)", source)
+        self.assertNotIn("if (state.expanded)", source)
+        self.assertIn("function renderNoteLinks(", source)
+        self.assertIn('class="note-links"', source)

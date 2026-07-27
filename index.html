@@ -200,6 +200,9 @@ body {
 .notes-area:hover { border-color: var(--accent); border-style: solid; }
 .notes-area:focus { outline: none; border-color: var(--accent); border-style: solid; }
 .notes-area:empty::before { content: attr(data-placeholder); color: var(--text-tertiary); font-style: italic; }
+.note-links { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; font-size: 12px; }
+.note-links a { color: var(--accent); text-decoration: none; padding: 3px 7px; border: 1px solid #C9D5FF; border-radius: 999px; background: var(--bg-hover); }
+.note-links a:hover { text-decoration: underline; }
 
 /* Actions */
 .card-actions { display: flex; gap: 8px; margin-top: 14px; flex-wrap: wrap; }
@@ -1743,6 +1746,7 @@ let userState = {};
 let isUnlocked = sessionStorage.getItem('qiuzhao_tracker_unlocked') === 'true';
 let filters = { industry: 'all', launch: 'all', application: 'all', progress: 'all', result: 'all' };
 let saveTimer = null;
+let expandedCompanyIds = new Set();
 
 function emptyCompanyState() {
   const state = { appliedPosition: '', progress: {}, results: {}, notes: '', status: 'pending' };
@@ -1776,6 +1780,17 @@ function escapeHtml(value) {
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#039;');
+}
+
+function renderNoteLinks(notes) {
+  const urls = [...new Set(
+    (String(notes || '').match(/https?:\/\/[^\s<>"']+/g) || [])
+      .map(url => url.replace(/[),.，。；！?？]+$/, ''))
+  )];
+  if (!urls.length) return '';
+  return `<div class="note-links">${urls.map((url, index) => (
+    `<a href="${escapeHtml(url)}" target="_blank" rel="noopener noreferrer">打开链接 ${index + 1} ↗</a>`
+  )).join('')}</div>`;
 }
 
 function autoUpdateStatus(state) {
@@ -1964,7 +1979,7 @@ function renderCompanies() {
     const card = document.createElement('div');
     card.className = 'company-card';
     card.id = 'card-' + c.id;
-    if (state.expanded) card.classList.add('expanded');
+    if (expandedCompanyIds.has(c.id)) card.classList.add('expanded');
 
     // Progress dots
     let dotsHTML = '';
@@ -2060,7 +2075,8 @@ function renderCompanies() {
         <div class="detail-section">
           <div class="detail-label">备注（可编辑）</div>
           <textarea class="notes-area" ${isUnlocked ? '' : 'disabled'} data-placeholder="${isUnlocked ? '记录面试经验、薪资信息、联系人等...' : '输入 1024 解锁后可编辑'}"
-            oninput="updateField('${c.id}','notes',this.value)">${escapeHtml(state.notes)}</textarea>
+            oninput="updateField('${c.id}','notes',this.value); refreshNoteLinks('${c.id}',this.value)">${escapeHtml(state.notes)}</textarea>
+          <div id="note-links-${c.id}">${renderNoteLinks(state.notes)}</div>
         </div>
 
         <div class="card-actions">
@@ -2128,10 +2144,10 @@ function renderResultTimeline(companyId, state) {
 
 // ========== Interactions ==========
 function toggleExpand(id) {
-  const state = getCompanyState(id);
-  state.expanded = !state.expanded;
+  if (expandedCompanyIds.has(id)) expandedCompanyIds.delete(id);
+  else expandedCompanyIds.add(id);
   const card = document.getElementById('card-' + id);
-  if (card) card.classList.toggle('expanded');
+  if (card) card.classList.toggle('expanded', expandedCompanyIds.has(id));
 }
 
 function cycleProgress(companyId, stepName) {
@@ -2212,6 +2228,11 @@ function updateField(companyId, field, value) {
       }
     }
   }
+}
+
+function refreshNoteLinks(companyId, notes) {
+  const preview = document.getElementById('note-links-' + companyId);
+  if (preview) preview.innerHTML = renderNoteLinks(notes);
 }
 
 function updateStatus(companyId, status) {
