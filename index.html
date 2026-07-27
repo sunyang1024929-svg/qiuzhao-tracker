@@ -182,7 +182,7 @@ body {
 .result-connector { flex: 0 0 14px; height: 30px; display: flex; align-items: center; }
 .result-connector::before { content: ""; width: 100%; height: 2px; background: var(--border-light); }
 
-.launch-date-input { max-width: 150px; padding: 5px 7px; border: 1px solid var(--border-medium); border-radius: 4px; color: var(--text-secondary); }
+.launch-date-input { width: min(100%, 190px); padding: 7px 8px; border: 1px solid var(--border-medium); border-radius: 4px; color: var(--text-secondary); }
 .launch-date-hint { display: block; margin-top: 4px; font-size: 11px; color: var(--text-tertiary); }
 
 /* Status dropdown */
@@ -2061,8 +2061,10 @@ function renderCompanies() {
           <div class="detail-label">招聘信息</div>
           <div class="info-grid">
             <div class="info-label">招聘启动</div><div class="info-value">
-              <input class="launch-date-input" ${isUnlocked ? '' : 'disabled'} value="${escapeHtml(launchDateValue)}" placeholder="2026-07 或 2026-07-15" onchange="updateLaunchDate('${c.id}',this.value)">
-              <span class="launch-date-hint">${isUnlocked ? '可手动修改并同步，清空可恢复系统记录。' : launchLabel(c)}</span>
+              <strong>手动修改招聘启动时间</strong><br>
+              <input id="launch-date-${c.id}" class="launch-date-input" ${isUnlocked ? '' : 'disabled'} value="${escapeHtml(launchDateValue)}" placeholder="2026-07 或 2026-07-15">
+              <button class="action-btn" type="button" ${isUnlocked ? '' : 'disabled'} onclick="updateLaunchDate('${c.id}',document.getElementById('launch-date-${c.id}').value)">保存时间</button>
+              <span class="launch-date-hint">${isUnlocked ? '填写后点击“保存时间”；清空后保存即可恢复系统记录。' : `输入 1024 解锁后可修改。当前：${launchLabel(c)}`}</span>
             </div>
             <div class="info-label">截止时间</div><div class="info-value ${deadlineClass}">${c.deadline}</div>
             <div class="info-label">${c.sourceType === 'excel' ? '招聘详情来源' : '招聘官网'}</div><div class="info-value"><a href="${c.website}" target="_blank" class="info-link">${c.websiteText}</a></div>
