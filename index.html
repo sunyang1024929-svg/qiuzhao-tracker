@@ -171,6 +171,16 @@ body {
 .timeline-step.done + .step-connector .step-line,
 .timeline-step.active + .step-connector .step-line { background: var(--success); }
 
+/* Application result timeline */
+.result-timeline { display: flex; align-items: stretch; overflow-x: auto; padding: 4px 0; }
+.result-step { flex: 1; min-width: 96px; text-align: center; padding: 8px 4px; }
+.result-step-name { font-size: 11px; color: var(--text-secondary); font-weight: 600; margin-bottom: 5px; }
+.result-select { width: 100%; font-size: 11px; padding: 4px; border: 1px solid var(--border-medium); border-radius: 4px; background: var(--bg-primary); color: var(--text-secondary); }
+.result-select.passed { border-color: var(--success); color: var(--success); }
+.result-select.failed { border-color: var(--danger); color: var(--danger); font-weight: 600; }
+.result-connector { flex: 0 0 14px; height: 30px; display: flex; align-items: center; }
+.result-connector::before { content: ""; width: 100%; height: 2px; background: var(--border-light); }
+
 /* Status dropdown */
 .status-select {
   font-size: 12px; padding: 4px 8px; border-radius: 4px; border: 1px solid var(--border-medium);
@@ -293,7 +303,13 @@ body {
       <option value="all">全部招聘状态</option><option value="open">已开启招聘</option><option value="not_open">未开启招聘</option><option value="unverified">待官网核验</option>
     </select>
     <select class="filter-select" id="applicationFilter" onchange="updateFilters()" disabled>
-      <option value="all">全部投递情况</option><option value="applied">已投递</option><option value="pending">未投递</option>
+      <option value="all">投递情况</option><option value="applied">已投递</option><option value="pending">未投递</option>
+    </select>
+    <select class="filter-select" id="progressFilter" onchange="updateFilters()" disabled>
+      <option value="all">投递进度</option><option value="application">网申</option><option value="assessment">测评</option><option value="interviewing">面试中</option>
+    </select>
+    <select class="filter-select" id="resultFilter" onchange="updateFilters()" disabled>
+      <option value="all">投递结果</option><option value="ongoing">进行中</option><option value="failed">已挂</option>
     </select>
   </div>
 
@@ -1715,23 +1731,30 @@ mergeExcelSupplements();
 
 // ========== Shared Tracker State ==========
 const PROGRESS_STEPS = ["网申","测评","笔试","一面","二面","HR面","OFFER"];
+const RESULT_STEPS = ["简历初筛","测评","一面","二面","三面","终面"];
 const SUPABASE_URL = 'https://ftfjtbtqbozcmdbqevcr.supabase.co';
 const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_7zktrJsxfcrtba0VUBvf1A_7WeTMOoZ';
 const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
 let userState = {};
 let isUnlocked = sessionStorage.getItem('qiuzhao_tracker_unlocked') === 'true';
-let filters = { industry: 'all', launch: 'all', application: 'all' };
+let filters = { industry: 'all', launch: 'all', application: 'all', progress: 'all', result: 'all' };
 let saveTimer = null;
 
 function emptyCompanyState() {
-  const state = { appliedPosition: '', progress: {}, notes: '', status: 'pending' };
+  const state = { appliedPosition: '', progress: {}, results: {}, notes: '', status: 'pending' };
   PROGRESS_STEPS.forEach(step => { state.progress[step] = { status: 'pending', date: '' }; });
+  RESULT_STEPS.forEach(step => { state.results[step] = 'pending'; });
   return state;
 }
 
 function getCompanyState(id) {
   if (!userState[id]) userState[id] = emptyCompanyState();
-  return userState[id];
+  const state = userState[id];
+  if (!state.results) state.results = {};
+  RESULT_STEPS.forEach(step => {
+    if (!['pending', 'passed', 'failed'].includes(state.results[step])) state.results[step] = 'pending';
+  });
+  return state;
 }
 
 function escapeHtml(value) {
@@ -1744,10 +1767,35 @@ function escapeHtml(value) {
 }
 
 function autoUpdateStatus(state) {
+  if (getResultStatus(state) === 'failed') {
+    state.status = 'rejected';
+    return;
+  }
+  if (state.status === 'offered') return;
   const steps = Object.values(state.progress || {});
   if (steps.some(step => step.status === 'done' || step.status === 'active')) {
     state.status = steps.some(step => step.status === 'active') ? 'interviewing' : 'applied';
   }
+}
+
+function isCompanyApplied(state) {
+  return state.status !== 'pending'
+    || Boolean(state.appliedPosition?.trim())
+    || Object.values(state.progress || {}).some(step => step.status !== 'pending');
+}
+
+function getApplicationProgress(state) {
+  if (!isCompanyApplied(state)) return 'pending';
+  const progress = state.progress || {};
+  const hasInterview = ["一面", "二面", "HR面"].some(step => progress[step]?.status !== 'pending');
+  if (hasInterview || state.status === 'interviewing') return 'interviewing';
+  const hasAssessment = ["测评", "笔试"].some(step => progress[step]?.status !== 'pending');
+  return hasAssessment ? 'assessment' : 'application';
+}
+
+function getResultStatus(state) {
+  if (Object.values(state.results || {}).some(result => result === 'failed')) return 'failed';
+  return isCompanyApplied(state) ? 'ongoing' : 'pending';
 }
 
 function updateMiniDots(companyId) {
@@ -1950,6 +1998,13 @@ function renderCompanies() {
         </div>
 
         <div class="detail-section">
+          <div class="detail-label">投递结果（逐阶段选择通过或未通过）</div>
+          <div class="result-timeline" id="result-${c.id}">
+            ${renderResultTimeline(c.id, state)}
+          </div>
+        </div>
+
+        <div class="detail-section">
           <div class="detail-label">整体状态</div>
           <select class="status-select" ${isUnlocked ? '' : 'disabled'} onchange="updateStatus('${c.id}',this.value)">
             <option value="pending" ${state.status==='pending'?'selected':''}>未投递</option>
@@ -2027,6 +2082,23 @@ function renderTimeline(companyId, state) {
   return html;
 }
 
+function renderResultTimeline(companyId, state) {
+  return RESULT_STEPS.map((step, index) => {
+    const result = state.results[step] || 'pending';
+    const connector = index < RESULT_STEPS.length - 1 ? '<div class="result-connector"></div>' : '';
+    return `
+      <div class="result-step">
+        <div class="result-step-name">${step}</div>
+        <select class="result-select ${result}" ${isUnlocked ? '' : 'disabled'} onchange="updateResult('${companyId}','${step}',this.value)">
+          <option value="pending" ${result === 'pending' ? 'selected' : ''}>进行中</option>
+          <option value="passed" ${result === 'passed' ? 'selected' : ''}>通过</option>
+          <option value="failed" ${result === 'failed' ? 'selected' : ''}>未通过</option>
+        </select>
+      </div>${connector}
+    `;
+  }).join('');
+}
+
 // ========== Interactions ==========
 function toggleExpand(id) {
   const state = getCompanyState(id);
@@ -2055,6 +2127,16 @@ function updateProgressDate(companyId, stepName, value) {
   const state = getCompanyState(companyId);
   state.progress[stepName].date = value.trim();
   saveState();
+}
+
+function updateResult(companyId, stepName, result) {
+  if (!ensureUnlocked()) return;
+  const state = getCompanyState(companyId);
+  state.results[stepName] = result;
+  if (result === 'failed') state.status = 'rejected';
+  else if (state.status === 'rejected' && getResultStatus(state) !== 'failed') state.status = 'applied';
+  saveState();
+  renderCompanies();
 }
 
 function updateField(companyId, field, value) {
@@ -2093,6 +2175,7 @@ function resetProgress(companyId) {
   if (!confirm('确定要重置该公司的投递进度吗？')) return;
   const state = getCompanyState(companyId);
   PROGRESS_STEPS.forEach(s => { state.progress[s] = { status: 'pending', date: '' }; });
+  RESULT_STEPS.forEach(s => { state.results[s] = 'pending'; });
   state.status = 'pending';
   saveState();
   renderCompanies();
@@ -2112,6 +2195,8 @@ function updateFilters() {
     industry: document.getElementById('industryFilter').value,
     launch: document.getElementById('launchFilter').value,
     application: document.getElementById('applicationFilter').value,
+    progress: document.getElementById('progressFilter').value,
+    result: document.getElementById('resultFilter').value,
   };
   renderCompanies();
 }
@@ -2127,8 +2212,11 @@ function matchesFilter(c) {
 
   if (filters.industry !== 'all' && c.cat !== filters.industry) return false;
   if (filters.launch !== 'all' && c.launchStatus !== filters.launch) return false;
-  if (filters.application === 'applied' && state.status === 'pending') return false;
-  if (filters.application === 'pending' && state.status !== 'pending') return false;
+  const applied = isCompanyApplied(state);
+  if (filters.application === 'applied' && !applied) return false;
+  if (filters.application === 'pending' && applied) return false;
+  if (filters.progress !== 'all' && getApplicationProgress(state) !== filters.progress) return false;
+  if (filters.result !== 'all' && getResultStatus(state) !== filters.result) return false;
   return true;
 }
 

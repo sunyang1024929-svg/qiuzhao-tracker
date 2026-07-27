@@ -1,7 +1,7 @@
 #!/bin/zsh
 set -euo pipefail
 
-REPO="/Users/sunyangsunshine/Documents/秋招网站链接/qiuzhao-tracker"
+REPO="/Users/sunyangsunshine/qiuzhao-tracker"
 NODE="/Users/sunyangsunshine/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node"
 PYTHON="/Users/sunyangsunshine/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3"
 

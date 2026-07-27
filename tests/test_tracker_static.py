@@ -55,3 +55,14 @@ class TrackerStaticTests(unittest.TestCase):
         self.assertIn("EXCEL_2027_EXISTING_DETAILS", source)
         self.assertIn("launchEvidence = 'source_table'", source)
         self.assertIn("已开启（来源表，启动日期待官网核验）", source)
+
+    def test_tracker_has_application_result_progress_and_filters(self):
+        page = Path(__file__).parents[1] / "index.html"
+        source = page.read_text(encoding="utf-8")
+
+        self.assertIn('const RESULT_STEPS = ["简历初筛","测评","一面","二面","三面","终面"]', source)
+        self.assertIn('id="progressFilter"', source)
+        self.assertIn('id="resultFilter"', source)
+        self.assertIn("function getApplicationProgress(", source)
+        self.assertIn("function getResultStatus(", source)
+        self.assertIn("function renderResultTimeline(", source)
