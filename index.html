@@ -176,6 +176,7 @@ body {
 .result-step { flex: 1; min-width: 96px; text-align: center; padding: 8px 4px; }
 .result-step-name { font-size: 11px; color: var(--text-secondary); font-weight: 600; margin-bottom: 5px; }
 .result-select { width: 100%; font-size: 11px; padding: 4px; border: 1px solid var(--border-medium); border-radius: 4px; background: var(--bg-primary); color: var(--text-secondary); }
+.result-select.active { border-color: var(--warning); color: var(--warning); font-weight: 600; }
 .result-select.passed { border-color: var(--success); color: var(--success); }
 .result-select.failed { border-color: var(--danger); color: var(--danger); font-weight: 600; }
 .result-connector { flex: 0 0 14px; height: 30px; display: flex; align-items: center; }
@@ -1743,7 +1744,7 @@ let saveTimer = null;
 function emptyCompanyState() {
   const state = { appliedPosition: '', progress: {}, results: {}, notes: '', status: 'pending' };
   PROGRESS_STEPS.forEach(step => { state.progress[step] = { status: 'pending', date: '' }; });
-  RESULT_STEPS.forEach(step => { state.results[step] = 'pending'; });
+  RESULT_STEPS.forEach((step, index) => { state.results[step] = index === 0 ? 'pending' : 'not_started'; });
   return state;
 }
 
@@ -1751,8 +1752,12 @@ function getCompanyState(id) {
   if (!userState[id]) userState[id] = emptyCompanyState();
   const state = userState[id];
   if (!state.results) state.results = {};
-  RESULT_STEPS.forEach(step => {
-    if (!['pending', 'passed', 'failed'].includes(state.results[step])) state.results[step] = 'pending';
+  RESULT_STEPS.forEach((step, index) => {
+    const validResults = index === 0
+      ? ['pending', 'passed', 'failed']
+      : ['not_started', 'active', 'passed', 'failed'];
+    if (index > 0 && state.results[step] === 'pending') state.results[step] = 'not_started';
+    if (!validResults.includes(state.results[step])) state.results[step] = index === 0 ? 'pending' : 'not_started';
   });
   return state;
 }
@@ -2084,15 +2089,25 @@ function renderTimeline(companyId, state) {
 
 function renderResultTimeline(companyId, state) {
   return RESULT_STEPS.map((step, index) => {
-    const result = state.results[step] || 'pending';
+    const result = state.results[step] || (index === 0 ? 'pending' : 'not_started');
     const connector = index < RESULT_STEPS.length - 1 ? '<div class="result-connector"></div>' : '';
+    const options = index === 0
+      ? `
+          <option value="pending" disabled ${result === 'pending' ? 'selected' : ''}>请选择</option>
+          <option value="passed" ${result === 'passed' ? 'selected' : ''}>通过</option>
+          <option value="failed" ${result === 'failed' ? 'selected' : ''}>未通过</option>
+        `
+      : `
+          <option value="not_started" ${result === 'not_started' ? 'selected' : ''}>未开启</option>
+          <option value="active" ${result === 'active' ? 'selected' : ''}>进行中</option>
+          <option value="passed" ${result === 'passed' ? 'selected' : ''}>通过</option>
+          <option value="failed" ${result === 'failed' ? 'selected' : ''}>未通过</option>
+        `;
     return `
       <div class="result-step">
         <div class="result-step-name">${step}</div>
         <select class="result-select ${result}" ${isUnlocked ? '' : 'disabled'} onchange="updateResult('${companyId}','${step}',this.value)">
-          <option value="pending" ${result === 'pending' ? 'selected' : ''}>进行中</option>
-          <option value="passed" ${result === 'passed' ? 'selected' : ''}>通过</option>
-          <option value="failed" ${result === 'failed' ? 'selected' : ''}>未通过</option>
+          ${options}
         </select>
       </div>${connector}
     `;
@@ -2175,7 +2190,7 @@ function resetProgress(companyId) {
   if (!confirm('确定要重置该公司的投递进度吗？')) return;
   const state = getCompanyState(companyId);
   PROGRESS_STEPS.forEach(s => { state.progress[s] = { status: 'pending', date: '' }; });
-  RESULT_STEPS.forEach(s => { state.results[s] = 'pending'; });
+  RESULT_STEPS.forEach((s, index) => { state.results[s] = index === 0 ? 'pending' : 'not_started'; });
   state.status = 'pending';
   saveState();
   renderCompanies();

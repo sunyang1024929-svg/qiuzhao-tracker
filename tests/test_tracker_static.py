@@ -66,3 +66,5 @@ class TrackerStaticTests(unittest.TestCase):
         self.assertIn("function getApplicationProgress(", source)
         self.assertIn("function getResultStatus(", source)
         self.assertIn("function renderResultTimeline(", source)
+        self.assertIn('value="not_started"', source)
+        self.assertIn('value="active"', source)
