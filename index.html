@@ -1836,13 +1836,16 @@ function updateMiniDots(companyId) {
 function parseLaunchInfo(company) {
   const override = getLaunchOverride(company.id);
   const hasManualDate = Object.prototype.hasOwnProperty.call(override, 'launchDate');
+  const hasManualLabel = Boolean(override.customLabel);
   const base = {
     ...company,
     launchStatus: override.launchStatus || company.launchStatus || 'unverified',
     launchDate: hasManualDate ? override.launchDate : (company.launchDate || ''),
     launchPrecision: hasManualDate ? override.launchPrecision : (company.launchPrecision || ''),
     launchEvidence: hasManualDate ? 'manual' : (company.launchEvidence || ''),
+    customLabel: override.customLabel || '',
   };
+  if (hasManualLabel) return base;
   const state = userState[company.id];
   const appliedDate = state?.progress?.['网申']?.date || '';
   const isApplied = state?.status && state.status !== 'pending';
@@ -1859,6 +1862,7 @@ function parseLaunchInfo(company) {
 
 function launchLabel(company) {
   const normalized = parseLaunchInfo(company);
+  if (normalized.customLabel) return normalized.customLabel;
   if (normalized.launchStatus === 'not_open') return '招聘暂未开启（官网预告 / 待开放）';
   if (normalized.launchStatus !== 'open') return '待官网核验';
   const observed = normalized.applicationDate;
@@ -2001,7 +2005,7 @@ function renderCompanies() {
           <div class="company-name">${c.name}</div>
           <span class="industry-tag ${c.tagClass}">${c.tag}</span>
         </div>
-        <div class="launch-meta"><span class="launch-badge ${launchClass} ${isUnlocked ? 'editable' : ''}" onclick="editLaunchDate('${c.id}', event)" title="${isUnlocked ? '点击修改招聘启动时间' : ''}">${launchLabel(c)}</span></div>
+        <div class="launch-meta"><span class="launch-badge ${launchClass} ${isUnlocked ? 'editable' : ''}" onclick="editLaunchLabel('${c.id}', event)" title="${isUnlocked ? '点击修改完整招聘状态' : ''}">${launchLabel(c)}</span></div>
         <div class="card-deadline ${deadlineClass}">截止：${c.deadline}</div>
         <div>${appliedText}</div>
         <div class="progress-mini">${dotsHTML}</div>
@@ -2206,14 +2210,34 @@ function updateLaunchDate(companyId, value) {
   renderCompanies();
 }
 
-function editLaunchDate(companyId, event) {
+function inferManualLaunchStatus(label) {
+  if (/未启动|未开启|未开始|待开放/.test(label)) return 'not_open';
+  if (/待官网核验|待核验|待确认/.test(label)) return 'unverified';
+  return 'open';
+}
+
+function editLaunchLabel(companyId, event) {
   event?.stopPropagation();
   if (!ensureUnlocked()) return;
   const company = COMPANIES.find(item => item.id === companyId);
-  const currentValue = company ? parseLaunchInfo(company).launchDate : '';
-  const nextValue = prompt('修改招聘启动时间：填写 2026-07 或 2026-07-15；清空可恢复系统记录。', currentValue);
-  if (nextValue === null) return;
-  updateLaunchDate(companyId, nextValue);
+  const currentLabel = company ? launchLabel(company) : '';
+  const nextLabel = prompt('直接修改完整招聘状态文字。示例：招聘暂未启动，等待官方通知。清空可恢复系统记录。', currentLabel);
+  if (nextLabel === null) return;
+  const label = nextLabel.trim();
+  const overrides = userState.__launchOverrides || (userState.__launchOverrides = {});
+
+  if (!label) {
+    delete overrides[companyId];
+    if (!Object.keys(overrides).length) delete userState.__launchOverrides;
+  } else {
+    overrides[companyId] = {
+      ...getLaunchOverride(companyId),
+      launchStatus: inferManualLaunchStatus(label),
+      customLabel: label,
+    };
+  }
+  saveState();
+  renderCompanies();
 }
 
 function updateField(companyId, field, value) {

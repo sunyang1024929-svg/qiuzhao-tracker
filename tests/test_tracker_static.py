@@ -82,8 +82,9 @@ class TrackerStaticTests(unittest.TestCase):
 
         self.assertIn("function getLaunchOverride(", source)
         self.assertIn("function updateLaunchDate(", source)
-        self.assertIn("function editLaunchDate(", source)
-        self.assertIn("onclick=\"editLaunchDate(", source)
+        self.assertIn("function editLaunchLabel(", source)
+        self.assertIn("function inferManualLaunchStatus(", source)
+        self.assertIn("onclick=\"editLaunchLabel(", source)
 
     def test_cards_default_to_collapsed_and_notes_render_links(self):
         page = Path(__file__).parents[1] / "index.html"
