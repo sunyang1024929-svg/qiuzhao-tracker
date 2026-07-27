@@ -75,3 +75,11 @@ class TrackerStaticTests(unittest.TestCase):
 
         self.assertNotIn("|| Boolean(state.appliedPosition?.trim())", source)
         self.assertNotIn("if (value.trim() && state.status === 'pending')", source)
+
+    def test_launch_date_can_be_manually_overridden(self):
+        page = Path(__file__).parents[1] / "index.html"
+        source = page.read_text(encoding="utf-8")
+
+        self.assertIn("function getLaunchOverride(", source)
+        self.assertIn("function updateLaunchDate(", source)
+        self.assertIn('class="launch-date-input"', source)
