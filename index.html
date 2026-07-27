@@ -1785,7 +1785,6 @@ function autoUpdateStatus(state) {
 
 function isCompanyApplied(state) {
   return state.status !== 'pending'
-    || Boolean(state.appliedPosition?.trim())
     || Object.values(state.progress || {}).some(step => step.status !== 'pending');
 }
 
@@ -2169,12 +2168,6 @@ function updateField(companyId, field, value) {
           : `<span class="card-applied-placeholder">点击展开填写投递岗位</span>`;
       }
     }
-    if (value.trim() && state.status === 'pending') {
-      state.status = 'applied';
-      const sel = card?.querySelector('.status-select');
-      if (sel) sel.value = 'applied';
-    }
-    updateStats();
   }
 }
 

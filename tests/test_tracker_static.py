@@ -68,3 +68,10 @@ class TrackerStaticTests(unittest.TestCase):
         self.assertIn("function renderResultTimeline(", source)
         self.assertIn('value="not_started"', source)
         self.assertIn('value="active"', source)
+
+    def test_typing_a_position_does_not_mark_a_company_as_applied(self):
+        page = Path(__file__).parents[1] / "index.html"
+        source = page.read_text(encoding="utf-8")
+
+        self.assertNotIn("|| Boolean(state.appliedPosition?.trim())", source)
+        self.assertNotIn("if (value.trim() && state.status === 'pending')", source)
