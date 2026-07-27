@@ -334,6 +334,7 @@ body {
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="excel-2027-supplements.js"></script>
+<script src="applied-company-supplements.js"></script>
 <script>
 // ========== Company Data ==========
 const COMPANIES = [
@@ -1734,6 +1735,15 @@ function mergeExcelSupplements() {
 
 mergeExcelSupplements();
 
+function mergeAppliedCompanySupplements() {
+  for (const supplement of window.APPLIED_COMPANY_SUPPLEMENTS || []) {
+    const existing = COMPANIES.find(company => normalizeCompanyName(company.name) === normalizeCompanyName(supplement.name));
+    if (!existing) COMPANIES.push(supplement);
+  }
+}
+
+mergeAppliedCompanySupplements();
+
 // ========== Shared Tracker State ==========
 const PROGRESS_STEPS = ["网申","测评","笔试","一面","二面","HR面","OFFER"];
 const RESULT_STEPS = ["简历初筛","测评","一面","二面","三面","终面"];
@@ -1818,6 +1828,7 @@ function getApplicationProgress(state) {
 }
 
 function getResultStatus(state) {
+  if (state.status === 'rejected') return 'failed';
   if (Object.values(state.results || {}).some(result => result === 'failed')) return 'failed';
   return isCompanyApplied(state) ? 'ongoing' : 'pending';
 }
@@ -2042,6 +2053,7 @@ function renderCompanies() {
             <option value="interviewing" ${state.status==='interviewing'?'selected':''}>面试中</option>
             <option value="offered" ${state.status==='offered'?'selected':''}>已获OFFER</option>
             <option value="rejected" ${state.status==='rejected'?'selected':''}>未通过</option>
+            <option value="abandoned" ${state.status==='abandoned'?'selected':''}>已放弃</option>
           </select>
         </div>
 
