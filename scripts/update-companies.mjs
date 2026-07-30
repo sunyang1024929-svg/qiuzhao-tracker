@@ -58,7 +58,91 @@ const WATCHLIST = [
   { name: 'IBM Consulting', website: 'https://www.ibm.com/careers/cn-zh/entry-level', industry: '咨询' },
 ];
 
-const SEARCH_QUERIES = [
+const GLOBAL_OFFICIAL_WATCHLIST = [
+  { name: 'Amazon', aliases: ['亚马逊'], website: 'https://www.amazon.jobs/content/zh/career-programs/university', industry: '互联网/AI' },
+  { name: 'Google', aliases: ['谷歌'], website: 'https://www.google.com/about/careers/applications/students/', industry: '互联网/AI' },
+  { name: 'Microsoft', aliases: ['微软'], website: 'https://careers.microsoft.com/students/us/en', industry: '互联网/AI' },
+  { name: 'Apple', aliases: ['苹果'], website: 'https://jobs.apple.com/en-us/students', industry: '互联网/AI' },
+  { name: 'Meta', aliases: ['Facebook'], website: 'https://www.metacareers.com/careerprograms/students', industry: '互联网/AI' },
+  { name: 'NVIDIA', aliases: ['英伟达'], website: 'https://www.nvidia.com/en-us/about-nvidia/careers/university-recruiting/', industry: '互联网/AI' },
+  { name: 'Intel', aliases: ['英特尔'], website: 'https://www.intel.com/content/www/us/en/jobs/students.html', industry: '互联网/AI' },
+  { name: 'Qualcomm', aliases: ['高通'], website: 'https://careers.qualcomm.com/students', industry: '互联网/AI' },
+  { name: 'Oracle', aliases: ['甲骨文'], website: 'https://www.oracle.com/careers/students-grads/', industry: '互联网/AI' },
+  { name: 'SAP', aliases: ['思爱普'], website: 'https://jobs.sap.com/content/students/', industry: '互联网/AI' },
+  { name: 'Salesforce', aliases: ['赛富时'], website: 'https://careers.salesforce.com/en/university-recruiting/', industry: '互联网/AI' },
+  { name: 'Adobe', aliases: ['奥多比'], website: 'https://careers.adobe.com/us/en/university', industry: '互联网/AI' },
+  { name: 'Cisco', aliases: ['思科'], website: 'https://jobs.cisco.com/jobs/SearchJobs/students-and-new-graduate', industry: '互联网/AI' },
+  { name: 'IBM', aliases: ['IBM Consulting'], website: 'https://www.ibm.com/careers/cn-zh/entry-level', industry: '咨询' },
+  { name: 'Dell Technologies', aliases: ['戴尔科技'], website: 'https://jobs.dell.com/students', industry: '互联网/AI' },
+  { name: 'HP', aliases: ['惠普'], website: 'https://jobs.hp.com/students-and-graduates', industry: '互联网/AI' },
+  { name: 'Tesla', aliases: ['特斯拉'], website: 'https://www.tesla.com/careers/search/?type=3', industry: '汽车/制造' },
+  { name: 'BMW', aliases: ['宝马'], website: 'https://www.bmwgroup.jobs/cn/zh/students.html', industry: '汽车/制造' },
+  { name: 'Mercedes-Benz', aliases: ['奔驰', '梅赛德斯-奔驰'], website: 'https://group.mercedes-benz.com/careers/students/', industry: '汽车/制造' },
+  { name: 'Volkswagen', aliases: ['大众汽车'], website: 'https://www.volkswagen-group.com/en/careers-15746', industry: '汽车/制造' },
+  { name: 'Toyota', aliases: ['丰田'], website: 'https://www.toyota.com.cn/career/', industry: '汽车/制造' },
+  { name: 'Ford', aliases: ['福特'], website: 'https://corporate.ford.com/careers/students-and-recent-graduates.html', industry: '汽车/制造' },
+  { name: 'General Motors', aliases: ['通用汽车'], website: 'https://search-careers.gm.com/en/university-recruiting', industry: '汽车/制造' },
+  { name: 'Bosch', aliases: ['博世'], website: 'https://www.bosch.com.cn/careers/students-and-graduates/', industry: '汽车/制造' },
+  { name: 'Siemens', aliases: ['西门子'], website: 'https://jobs.siemens.com/careers', industry: '汽车/制造' },
+  { name: 'GE Vernova', aliases: ['通用电气'], website: 'https://jobs.gecareers.com/vernova/global/en/students', industry: '汽车/制造' },
+  { name: 'Honeywell', aliases: ['霍尼韦尔'], website: 'https://careers.honeywell.com/us/en/students-and-graduates', industry: '汽车/制造' },
+  { name: 'Schneider Electric', aliases: ['施耐德电气'], website: 'https://www.se.com/cn/zh/about-us/careers/students-young-professionals/', industry: '汽车/制造' },
+  { name: 'ABB', aliases: ['ABB中国'], website: 'https://careers.abb/global/en/students-graduates', industry: '汽车/制造' },
+  { name: '3M', aliases: ['明尼苏达矿业制造'], website: 'https://www.3m.com/3M/en_US/careers-us/students/', industry: '快消/零售' },
+  { name: 'Dow', aliases: ['陶氏'], website: 'https://corporate.dow.com/en-us/careers/students.html', industry: '汽车/制造' },
+  { name: 'BASF', aliases: ['巴斯夫'], website: 'https://basf.jobs/global/en/students', industry: '汽车/制造' },
+  { name: 'Procter & Gamble', aliases: ['宝洁', 'P&G'], website: 'https://www.pgcareers.com/cn/zh/campus', industry: '快消/零售' },
+  { name: 'Unilever', aliases: ['联合利华'], website: 'https://careers.unilever.com/china-students', industry: '快消/零售' },
+  { name: 'LVMH', aliases: ['路威酩轩'], website: 'https://www.lvmh.cn/join-us/students-young-graduates/', industry: '快消/零售' },
+  { name: 'L’Oréal', aliases: ['欧莱雅'], website: 'https://careers.loreal.com/zh_CN/china/content/Students', industry: '快消/零售' },
+  { name: 'Nestlé', aliases: ['雀巢'], website: 'https://www.nestle.com.cn/jobs/students-graduates', industry: '快消/零售' },
+  { name: 'Coca-Cola', aliases: ['可口可乐'], website: 'https://careers.coca-colacompany.com/early-career', industry: '快消/零售' },
+  { name: 'PepsiCo', aliases: ['百事'], website: 'https://www.pepsicojobs.com/main/students-and-graduates', industry: '快消/零售' },
+  { name: 'Mars', aliases: ['玛氏'], website: 'https://careers.mars.com/cn/zh/students-graduates', industry: '快消/零售' },
+  { name: 'Mondelez', aliases: ['亿滋'], website: 'https://www.mondelezinternational.com/careers/students-graduates/', industry: '快消/零售' },
+  { name: 'Nike', aliases: ['耐克'], website: 'https://jobs.nike.com/internships', industry: '快消/零售' },
+  { name: 'Adidas', aliases: ['阿迪达斯'], website: 'https://careers.adidas-group.com/teams/students-and-graduates', industry: '快消/零售' },
+  { name: 'Johnson & Johnson', aliases: ['强生'], website: 'https://www.careers.jnj.com/en/students', industry: '快消/零售' },
+  { name: 'Pfizer', aliases: ['辉瑞'], website: 'https://www.pfizer.com/about/careers/early-careers', industry: '快消/零售' },
+  { name: 'Novartis', aliases: ['诺华'], website: 'https://www.novartis.com/careers/career-programs/students', industry: '快消/零售' },
+  { name: 'Roche', aliases: ['罗氏'], website: 'https://careers.roche.com/global/en/students-graduates', industry: '快消/零售' },
+  { name: 'Sanofi', aliases: ['赛诺菲'], website: 'https://www.sanofi.com/en/careers/students-graduates', industry: '快消/零售' },
+  { name: 'AstraZeneca', aliases: ['阿斯利康'], website: 'https://careers.astrazeneca.com/students', industry: '快消/零售' },
+  { name: 'Bayer', aliases: ['拜耳'], website: 'https://www.bayer.com/en/career/students', industry: '快消/零售' },
+  { name: 'JPMorgan Chase', aliases: ['摩根大通'], website: 'https://careers.jpmorgan.com/global/en/students', industry: '金融' },
+  { name: 'Morgan Stanley', aliases: ['摩根士丹利'], website: 'https://www.morganstanley.com/careers/career-opportunities-search/students-graduates', industry: '金融' },
+  { name: 'Goldman Sachs', aliases: ['高盛'], website: 'https://www.goldmansachs.com/careers/students', industry: '金融' },
+  { name: 'Citi', aliases: ['花旗'], website: 'https://jobs.citi.com/students-and-graduates', industry: '金融' },
+  { name: 'HSBC', aliases: ['汇丰'], website: 'https://www.hsbc.com/careers/students-and-graduates', industry: '金融' },
+  { name: 'UBS', aliases: ['瑞银'], website: 'https://www.ubs.com/global/en/careers/students.html', industry: '金融' },
+  { name: 'Deutsche Bank', aliases: ['德意志银行'], website: 'https://careers.db.com/students-graduates', industry: '金融' },
+  { name: 'BlackRock', aliases: ['贝莱德'], website: 'https://careers.blackrock.com/students-and-graduates', industry: '金融' },
+  { name: 'PwC', aliases: ['普华永道'], website: 'https://www.pwccn.com/en/careers/students.html', industry: '咨询' },
+  { name: 'Deloitte', aliases: ['德勤'], website: 'https://www2.deloitte.com/cn/en/careers/students.html', industry: '咨询' },
+  { name: 'EY', aliases: ['安永'], website: 'https://www.ey.com/zh_cn/careers/students', industry: '咨询' },
+  { name: 'KPMG', aliases: ['毕马威'], website: 'https://kpmg.com/cn/en/home/careers/graduates.html', industry: '咨询' },
+  { name: 'Accenture', aliases: ['埃森哲'], website: 'https://www.accenture.com/cn-zh/careers/local/students', industry: '咨询' },
+  { name: 'McKinsey', aliases: ['麦肯锡'], website: 'https://www.mckinsey.com/careers/students', industry: '咨询' },
+  { name: 'BCG', aliases: ['波士顿咨询'], website: 'https://careers.bcg.com/students', industry: '咨询' },
+  { name: 'Bain', aliases: ['贝恩'], website: 'https://www.bain.com/careers/work-with-us/internships-programs/', industry: '咨询' },
+  { name: 'SpaceX', aliases: ['太空探索技术'], website: 'https://www.spacex.com/careers/', industry: '互联网/AI' },
+  { name: 'OpenAI', aliases: [], website: 'https://openai.com/careers/search/', industry: '互联网/AI' },
+  { name: 'Stripe', aliases: [], website: 'https://stripe.com/jobs/university', industry: '互联网/AI' },
+  { name: 'Canva', aliases: [], website: 'https://www.canva.com/careers/early-careers/', industry: '互联网/AI' },
+  { name: 'Databricks', aliases: [], website: 'https://www.databricks.com/company/careers/university-recruiting', industry: '互联网/AI' },
+  { name: 'Scale AI', aliases: [], website: 'https://www.scale.com/careers', industry: '互联网/AI' },
+  { name: 'Anthropic', aliases: [], website: 'https://www.anthropic.com/careers', industry: '互联网/AI' },
+  { name: 'Shein', aliases: ['希音'], website: 'https://careers.sheingroup.com/campus', industry: '快消/零售' },
+  { name: 'DJI', aliases: ['大疆'], website: 'https://we.dji.com/zh-CN/campus', industry: '互联网/AI' },
+  { name: 'DeepSeek', aliases: ['深度求索'], website: 'https://www.deepseek.com/careers', industry: '互联网/AI' },
+  { name: 'MiniMax', aliases: ['稀宇科技'], website: 'https://www.minimaxi.com/careers', industry: '互联网/AI' },
+  { name: '智谱AI', aliases: ['Zhipu AI'], website: 'https://www.zhipuai.cn/careers', industry: '互联网/AI' },
+  { name: '月之暗面', aliases: ['Moonshot AI'], website: 'https://www.moonshot.cn/careers', industry: '互联网/AI' },
+  { name: '阶跃星辰', aliases: ['StepFun'], website: 'https://www.stepfun.com/careers', industry: '互联网/AI' },
+  { name: '百川智能', aliases: ['Baichuan AI'], website: 'https://www.baichuan-ai.com/home#jobs', industry: '互联网/AI' },
+];
+
+const BROAD_SEARCH_QUERIES = [
   '2027校园招聘',
   '2027 校园招聘',
   '2027届秋招',
@@ -69,7 +153,14 @@ const SEARCH_QUERIES = [
   '2027届 校园招聘 官网 秋招 截止',
   '2027届 校招 官网 正式启动',
   '2026年 秋招提前批 2027届 校园招聘',
+  '世界500强 2027届 校园招聘 官网',
+  '世界五百强 2027届 秋招 官网',
+  '独角兽 2027届 校园招聘 官网',
+  '知名外企 2027届 校园招聘 官网',
+  '外企 2027届 管培生 校园招聘 官网',
 ];
+
+const SEARCH_QUERIES = BROAD_SEARCH_QUERIES;
 
 function slugify(name) {
   const pinyinish = name
@@ -79,6 +170,27 @@ function slugify(name) {
   const ascii = pinyinish.replace(/[^a-z0-9]+/gi, '-').replace(/^-|-$/g, '');
   if (ascii) return ascii;
   return `company-${Buffer.from(name).toString('hex').slice(0, 12)}`;
+}
+
+function normalizeCompanyName(name) {
+  return name
+    .toLowerCase()
+    .replace(/[（(].*?[）)]/g, '')
+    .replace(/集团|股份|有限|公司|中国|科技|汽车|technologies|technology|inc|corp|corporation|group|china/g, '')
+    .replace(/[^a-z0-9\u4e00-\u9fa5]+/g, '');
+}
+
+function companyKeys(company) {
+  return [company.name, ...(company.aliases || [])].map(normalizeCompanyName).filter(Boolean);
+}
+
+function buildExistingCompanyKeySet(html) {
+  return new Set([...html.matchAll(/name:\s*"([^"]+)"/g)].flatMap(m => {
+    const name = m[1];
+    return [name, name.replace(/[A-Za-z&. -]+/g, ''), name.replace(/[\u4e00-\u9fa5]+/g, '')]
+      .map(normalizeCompanyName)
+      .filter(Boolean);
+  }));
 }
 
 function inferCategory(company) {
@@ -98,6 +210,10 @@ function decodeEntities(text) {
 
 function stripHtml(text) {
   return decodeEntities(text.replace(/<[^>]+>/g, ' ')).replace(/\s+/g, ' ').trim();
+}
+
+function hasRecruitmentSignal(text) {
+  return /(2027届|2027\s*(?:campus|graduate|internship|program|programme)|校园招聘|校招|秋招|应届|毕业生|graduates?|students?|university recruiting|early careers|campus recruitment)/i.test(text);
 }
 
 async function fetchText(url) {
@@ -153,6 +269,10 @@ function extractLaunchInfo(text) {
       launchDate: `${new Date().getFullYear()}-${String(match[1]).padStart(2, '0')}-${String(match[2]).padStart(2, '0')}`,
     };
   }
+  const explicitOpen = /(正式启动|招聘[^。；;\n]{0,20}启动|网申[^。；;\n]{0,20}开放|投递[^。；;\n]{0,20}开放|申请[^。；;\n]{0,20}开放|报名[^。；;\n]{0,20}开始|now open|applications?\s+are\s+open|apply now|accepting applications|open for applications|recruiting now)/i;
+  if (hasRecruitmentSignal(text) && explicitOpen.test(text)) {
+    return { launchStatus: 'open', launchDate: '' };
+  }
   return { launchStatus: 'not_open', launchDate: '' };
 }
 
@@ -190,7 +310,7 @@ async function buildCandidate(company) {
   const page = await fetchText(company.website);
   const text = stripHtml(page).slice(0, 16000);
   const sourceText = `${company.sourceText || ''} ${text}`;
-  if (!/(2027届|2026届|秋招|校园招聘|校招|应届生|毕业生)/.test(sourceText)) return null;
+  if (!hasRecruitmentSignal(sourceText)) return null;
 
   const category = inferCategory(company);
   const recPositions = extractPositions(sourceText);
@@ -212,6 +332,7 @@ async function buildCandidate(company) {
     deadlineType: /截止|\d{1,2}月/.test(deadline) ? 'normal' : 'open',
     launchStatus: launch.launchStatus,
     launchDate: launch.launchDate,
+    launchEvidence: launch.launchStatus === 'open' ? 'official_auto' : 'unverified',
     website: company.website,
     websiteText: hostname || company.website,
     process: '网申 → 简历筛选 → 测评/笔试 → 面试 → OFFER | 以招聘官网公告为准',
@@ -226,7 +347,7 @@ function toCompanyLiteral(c) {
     recPositions:${q(c.recPositions)},
     recNote:${q(c.recNote)},
     deadline:${q(c.deadline)}, deadlineType:${q(c.deadlineType)},
-    launchStatus:${q(c.launchStatus)}, launchDate:${q(c.launchDate)},
+    launchStatus:${q(c.launchStatus)}, launchDate:${q(c.launchDate)}, launchEvidence:${q(c.launchEvidence)},
     website:${q(c.website)}, websiteText:${q(c.websiteText)},
     process:${q(c.process)},
     location:${q(c.location)}
@@ -237,23 +358,34 @@ async function main() {
   ensurePublicUserDataIsEmpty();
   const html = fs.readFileSync(indexPath, 'utf8');
   const existing = extractExistingCompanies(html);
-  const discovered = [...WATCHLIST, ...(await discoverFromSearch())];
+  const existingCompanyKeys = buildExistingCompanyKeySet(html);
+  const discovered = [...WATCHLIST, ...GLOBAL_OFFICIAL_WATCHLIST, ...(await discoverFromSearch())];
   const seen = new Set();
   const additions = [];
 
-  for (const item of discovered) {
-    const baseId = slugify(item.name);
-    const key = item.name.toLowerCase();
-    if (seen.has(key) || existing.names.has(item.name) || existing.ids.has(baseId)) continue;
-    seen.add(key);
-    const candidate = await buildCandidate(item);
-    if (!candidate) continue;
-    let id = candidate.id;
-    let n = 2;
-    while (existing.ids.has(id) || additions.some(c => c.id === id)) id = `${candidate.id}-${n++}`;
-    candidate.id = id;
-    additions.push(candidate);
-    if (additions.length >= 12) break;
+  for (let i = 0; i < discovered.length && additions.length < 12; i += 8) {
+    const batch = discovered.slice(i, i + 8);
+    const filtered = batch.filter(item => {
+      const baseId = slugify(item.name);
+      const keys = companyKeys(item);
+      if (
+        keys.some(key => seen.has(key) || existingCompanyKeys.has(key)) ||
+        existing.names.has(item.name) ||
+        existing.ids.has(baseId)
+      ) return false;
+      for (const key of keys) seen.add(key);
+      return true;
+    });
+    const built = await Promise.all(filtered.map(item => buildCandidate(item)));
+    for (const candidate of built) {
+      if (!candidate) continue;
+      let id = candidate.id;
+      let n = 2;
+      while (existing.ids.has(id) || additions.some(c => c.id === id)) id = `${candidate.id}-${n++}`;
+      candidate.id = id;
+      additions.push(candidate);
+      if (additions.length >= 12) break;
+    }
   }
 
   if (!additions.length) {
@@ -261,7 +393,7 @@ async function main() {
     return;
   }
 
-  const marker = /\n\];\n+\/\/ ={2,} Progress Steps/;
+  const marker = /\n\];\n+(?:\/\/ ={2,} Progress Steps|function normalizeCompanyName)/;
   if (!marker.test(html)) throw new Error('Cannot find COMPANIES array ending marker.');
   const insertion = ',\n' + additions.map(toCompanyLiteral).join(',\n');
   const next = html.replace(marker, (m) => `${insertion}${m}`);
