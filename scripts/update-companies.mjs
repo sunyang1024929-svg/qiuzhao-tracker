@@ -161,6 +161,20 @@ const BROAD_SEARCH_QUERIES = [
 ];
 
 const SEARCH_QUERIES = BROAD_SEARCH_QUERIES;
+const GENERIC_TITLE_BLACKLIST = [
+  '校园',
+  '校招',
+  '秋招',
+  '外企',
+  '岗位汇总',
+  '岗位',
+  '招聘',
+  '2027',
+  '2027届',
+  '2026届',
+  '27届',
+  '国企央企',
+];
 
 function slugify(name) {
   const pinyinish = name
@@ -285,7 +299,13 @@ function extractPositions(text) {
 function extractCompanyFromTitle(title) {
   const clean = stripHtml(title).replace(/[|｜_-].*$/, '').trim();
   const m = clean.match(/([\u4e00-\u9fa5A-Za-z0-9&. ]{2,24}?)(?:2027届|2026届|校园招聘|秋招|招聘|校招)/);
-  return m ? m[1].replace(/官方|官网|正式启动|启动|开放/g, '').trim() : '';
+  const name = m ? m[1].replace(/官方|官网|正式启动|启动|开放/g, '').trim() : '';
+  if (!name) return '';
+  const normalized = normalizeCompanyName(name);
+  if (!normalized) return '';
+  if (/^\d{2,4}(?:届)?$/.test(normalized)) return '';
+  if (GENERIC_TITLE_BLACKLIST.some(term => normalized === term || normalized.includes(term))) return '';
+  return name;
 }
 
 async function discoverFromSearch() {
@@ -402,7 +422,11 @@ async function main() {
   for (const c of additions) console.log(`- ${c.name} ${c.website}`);
 }
 
-main().catch(err => {
-  console.error(err);
-  process.exit(1);
-});
+if (process.argv[1] === fileURLToPath(import.meta.url)) {
+  main().catch(err => {
+    console.error(err);
+    process.exit(1);
+  });
+}
+
+export { extractCompanyFromTitle };

@@ -95,3 +95,15 @@ class TrackerStaticTests(unittest.TestCase):
         self.assertNotIn("if (state.expanded)", source)
         self.assertIn("function renderNoteLinks(", source)
         self.assertIn('class="note-links"', source)
+
+    def test_manual_save_button_flushes_shared_state(self):
+        page = Path(__file__).parents[1] / "index.html"
+        source = page.read_text(encoding="utf-8")
+
+        self.assertIn('id="manualSaveButton"', source)
+        self.assertIn('onclick="manualSaveState()"', source)
+        self.assertIn('id="manualSaveStatus"', source)
+        self.assertIn("async function persistSharedState()", source)
+        self.assertIn("async function manualSaveState()", source)
+        self.assertIn("clearTimeout(saveTimer)", source)
+        self.assertIn("已保存完成", source)
