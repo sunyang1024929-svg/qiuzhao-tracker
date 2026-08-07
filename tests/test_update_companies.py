@@ -37,3 +37,24 @@ console.log(JSON.stringify(titles.map((title) => extractCompanyFromTitle(title))
             json.loads(result.stdout),
             ["华为", "", "", "", ""],
         )
+
+    def test_companies_end_marker_allows_indented_array_close(self):
+        repo = Path(__file__).parents[1]
+        script = """
+import { hasCompaniesEndMarker } from './scripts/update-companies.mjs';
+const html = 'const COMPANIES = [\\n  { id:"demo" }\\n  ];\\n\\nfunction normalizeCompanyName(name) { return name; }';
+console.log(JSON.stringify(hasCompaniesEndMarker(html)));
+"""
+        node = os.environ.get(
+            "NODE_BINARY",
+            "/Users/sunyangsunshine/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+        )
+        result = subprocess.run(
+            [node, "--input-type=module", "-e", script],
+            cwd=repo,
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+
+        self.assertEqual(json.loads(result.stdout), True)

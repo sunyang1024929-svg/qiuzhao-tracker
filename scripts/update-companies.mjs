@@ -256,6 +256,12 @@ function extractExistingCompanies(html) {
   return { ids, names };
 }
 
+const COMPANIES_END_MARKER = /\n\s*\];\n+(?:\/\/ ={2,} Progress Steps|function normalizeCompanyName)/;
+
+function hasCompaniesEndMarker(html) {
+  return COMPANIES_END_MARKER.test(html);
+}
+
 function extractDeadline(text) {
   const patterns = [
     /(截止(?:时间)?[:：]?\s*[^。；;\n]{0,28})/,
@@ -413,10 +419,9 @@ async function main() {
     return;
   }
 
-  const marker = /\n\];\n+(?:\/\/ ={2,} Progress Steps|function normalizeCompanyName)/;
-  if (!marker.test(html)) throw new Error('Cannot find COMPANIES array ending marker.');
+  if (!hasCompaniesEndMarker(html)) throw new Error('Cannot find COMPANIES array ending marker.');
   const insertion = ',\n' + additions.map(toCompanyLiteral).join(',\n');
-  const next = html.replace(marker, (m) => `${insertion}${m}`);
+  const next = html.replace(COMPANIES_END_MARKER, (m) => `${insertion}${m}`);
   fs.writeFileSync(indexPath, next);
   console.log(`Added ${additions.length} companies:`);
   for (const c of additions) console.log(`- ${c.name} ${c.website}`);
@@ -429,4 +434,4 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
   });
 }
 
-export { extractCompanyFromTitle };
+export { extractCompanyFromTitle, hasCompaniesEndMarker };
